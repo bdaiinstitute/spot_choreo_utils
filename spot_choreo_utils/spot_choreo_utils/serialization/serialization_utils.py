@@ -14,7 +14,7 @@ from bosdyn.choreography.client.choreography import (
 from google.protobuf import text_format
 
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_builder import AnimationBuilder
-from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_functions import check_if_protobuf_field_set
+from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import check_if_protobuf_field_set
 from spot_choreo_utils.choreo_creation.choreo_builders.sequence_builder import SequenceBuilder
 
 
