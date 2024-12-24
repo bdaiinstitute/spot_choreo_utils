@@ -16,5 +16,10 @@ pip install -e .
 cd /workspaces/spot_choreo_utils/
 pip install -e .
 
+# Install web animator
+cd /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/
+bash ./scripts/install_prereqs
+pip install -e .
+
 # enter the container as the newly configured user
 /bin/bash -c "su - developer"

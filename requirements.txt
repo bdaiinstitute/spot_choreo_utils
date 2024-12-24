@@ -11,3 +11,4 @@ bosdyn-orbit==4.1.1
 matplotlib==3.5.1
 spatialmath-python==1.1.13
 pytest==8.3.4
+drake==1.24.0
