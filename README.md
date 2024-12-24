@@ -28,6 +28,23 @@ This will install gitman, download all external dependency repositories, build a
 
 For a full dependencies list see the Dockerfile and entrypoint scripts.
 
+## Setting up the Web Animator
+The Web Animator provides a way to create pose-to-pose animations through the web browser.
+  - cd spot_choreo_utils/web_animator
+  - pip install -e .
+
+
+## Animating with the Web Animator
+You can explore potential choreographic poses and export them for testing on the robot through the Web Animator. The Web Animator does its best to guarantee stability and on robot validity when all feet are locked on the ground, but once feet are unlocked there is a much heavier burden placed on the choreographer to think about stability and comply with choreographer protobuf requirements.
+
+To start animating:
+  - cd spot_choreo_utils/web_animator/spot_web_animator
+  - python animate.py
+  - Type an animation name into the terminal 
+  - Open a seperate tab to localhost:7000 for web visualizer
+
+Use the animation sliders to set robot poses, and then use the Save Pose As Keyframe button to add the pose to an animation. The animation you create will be saved to the active directory under choreo_files.
+
 # Contributing to this repo
 This repository enforces `ruff` and `black` linting. To verify that your code will pass inspection, install `pre-commit` and run:
 ```bash
