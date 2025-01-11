@@ -1,0 +1,4 @@
+toml==0.10.2
+drake==1.30.0
+numpy==1.26.4
+pre-commit==3.8.0
