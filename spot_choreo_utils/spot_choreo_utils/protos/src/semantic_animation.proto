@@ -1,0 +1,29 @@
+// Copyright (c) 2024-2025 Boston Dynamics AI Institute LLC. All rights reserved.
+//
+// A protobuf that combines a boston dynamics animation definition with
+// semantic information for intuitive animation editing and construction
+
+syntax = "proto3";
+
+package ai_institute_proto;
+
+import "bosdyn/api/spot/choreography_sequence.proto";
+
+message CustomNamedSegment {
+   // Store the start and end keyframes to identify a segment
+   // This makes it easy to detect edits that get out of line between
+   // the animation and semantic mapping in a way that times or keyframe numbers don't
+   string segment_name = 1;
+   bosdyn.api.spot.AnimationKeyframe start_keyframe = 2;
+   bosdyn.api.spot.AnimationKeyframe end_keyframe = 3;
+}
+
+
+message SemanticMetadata {
+    repeated CustomNamedSegment named_segments = 1;
+}
+
+message SemanticAnimation {
+    bosdyn.api.spot.Animation base_animation = 1;
+    SemanticMetadata semantic_metadata = 2;
+}

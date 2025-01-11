@@ -67,7 +67,7 @@ def save_animation(
         output_folder = Path(output_folder).resolve()
 
     if isinstance(animation, AnimationBuilder):
-        animation = animation.build_animation()
+        animation = animation.build()
         if not animation:
             error_msg = "Failed to build animation, can't save"
             if logger:
@@ -136,7 +136,7 @@ def save_sequence(
     """Save sequences to disk as a .pbtxt"""
 
     if isinstance(sequence, SequenceBuilder):
-        sequence = sequence.build_sequence()
+        sequence = sequence.build()
         if not sequence:
             error_msg = "Failed to build sequence, can't save"
             if logger:
