@@ -1,0 +1,13 @@
+pip==24.1.2
+setuptools==69.5.1
+wheel>=0.42.0
+toml>=0.10.2
+jupyter==1.1.1
+notebook==7.3.2
+bosdyn-client==4.1.1
+bosdyn-mission==4.1.1
+bosdyn-choreography-client==4.1.1
+bosdyn-orbit==4.1.1
+matplotlib==3.5.1
+spatialmath-python==1.1.13
+pytest==8.3.4

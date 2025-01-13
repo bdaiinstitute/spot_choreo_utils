@@ -1,0 +1,9 @@
+name: "pose_to_pose_sequence"
+slices_per_minute: 120
+moves {
+  type: "animation"
+  requested_slices: 16
+  animate_params {
+    animation_name: "pose_to_pose_animation"
+  }
+}

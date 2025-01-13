@@ -1,0 +1,49 @@
+# Copyright (c) 2025 Boston Dynamics AI Institute LLC. All rights reserved.
+
+location: external
+sources:
+  - repo: https://github.com/bdaiinstitute/spot_wrapper
+    name: spot_wrapper
+    rev: main
+    type: git
+    params:
+    sparse_paths:
+      -
+    links:
+      -
+    scripts:
+      - 
+  - repo: https://github.com/boston-dynamics/spot-sdk
+    name: spot_sdk
+    rev: main
+    type: git
+    params:
+    sparse_paths:
+      -
+    links:
+      -
+    scripts:
+      - 
+sources_locked:
+  - repo: https://github.com/bdaiinstitute/spot_wrapper
+    name: spot_wrapper
+    rev: c78ebfb1236921c820fe27ae70fd58d4f2257a16
+    type: git
+    params:
+    sparse_paths:
+      -
+    links:
+      -
+    scripts:
+      - 
+  - repo: https://github.com/boston-dynamics/spot-sdk
+    name: spot_sdk
+    rev: 7569b7998d486109f80de31dd5f86470016bb141
+    type: git
+    params:
+    sparse_paths:
+      -
+    links:
+      -
+    scripts:
+      - 
