@@ -1,0 +1,12 @@
+external/
+undecided
+**/**/__pycache__
+**/**/*.egg-info/
+.bash_history
+.cache/*
+**/.ipynb_checkpoints
+**/**/*-checkpoint.ipynb
+.config
+.ipython/
+.jupyter/
+.local/

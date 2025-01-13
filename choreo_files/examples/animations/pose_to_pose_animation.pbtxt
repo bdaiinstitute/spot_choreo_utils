@@ -1,0 +1,824 @@
+name: "pose_to_pose_animation"
+animation_keyframes {
+  gripper {
+    gripper_angle {
+      value: -0.0162961483001709
+    }
+  }
+  arm {
+    joint_angles {
+      shoulder_0 {
+        value: -8.7738037109375e-05
+      }
+      shoulder_1 {
+        value: -3.115814208984375
+      }
+      elbow_0 {
+        value: 3.1360864639282227
+      }
+      elbow_1 {
+        value: 1.5676203966140747
+      }
+      wrist_0 {
+        value: -0.0016188621520996094
+      }
+      wrist_1 {
+        value: -1.5678930282592773
+      }
+    }
+  }
+  body {
+    body_pos {
+      x {
+        value: -1.9743780895531415e-05
+      }
+      y {
+        value: -1.2787615255582807e-07
+      }
+      z {
+        value: 0.00027987840587895274
+      }
+    }
+    quaternion {
+      x: 1.9496928637987086e-05
+      y: 6.5066383190697662e-06
+      z: 3.3857925969395646e-06
+      w: 0.99999999978303511
+    }
+  }
+  legs {
+    fl {
+      joint_angles {
+        hip_x: 0.0054500964470207691
+        hip_y: 0.58032608032226562
+        knee: -1.1273726224899292
+      }
+      stance {
+        value: true
+      }
+    }
+    fr {
+      joint_angles {
+        hip_x: -0.0042451582849025726
+        hip_y: 0.57548254728317261
+        knee: -1.1273726224899292
+      }
+      stance {
+        value: true
+      }
+    }
+    hl {
+      joint_angles {
+        hip_x: 0.0029750762041658163
+        hip_y: 0.66017049551010132
+        knee: -1.2831007242202759
+      }
+      stance {
+        value: true
+      }
+    }
+    hr {
+      joint_angles {
+        hip_x: -0.0049984799697995186
+        hip_y: 0.65922492742538452
+        knee: -1.2796143293380737
+      }
+      stance {
+        value: true
+      }
+    }
+  }
+}
+animation_keyframes {
+  time: 2
+  gripper {
+    gripper_angle {
+      value: -0.01636803150177002
+    }
+  }
+  arm {
+    joint_angles {
+      shoulder_0 {
+        value: -0.016305208206176758
+      }
+      shoulder_1 {
+        value: -2.090827465057373
+      }
+      elbow_0 {
+        value: 2.5739223957061768
+      }
+      elbow_1 {
+        value: 0.16733336448669434
+      }
+      wrist_0 {
+        value: -0.3841552734375
+      }
+      wrist_1 {
+        value: 0.4090888500213623
+      }
+    }
+  }
+  body {
+    body_pos {
+      x {
+        value: 3.1038426759888438e-06
+      }
+      y {
+        value: -1.6082435960740327e-06
+      }
+      z {
+        value: -5.5629376904953176e-07
+      }
+    }
+    quaternion {
+      x: 4.2231023531066895e-06
+      y: -3.1674124167854991e-06
+      z: -1.1452209131008307e-05
+      w: 0.99999999992048982
+    }
+  }
+  legs {
+    fl {
+      joint_angles {
+        hip_x: 0.0014610147336497903
+        hip_y: 0.56382119655609131
+        knee: -1.1218758821487427
+      }
+      stance {
+        value: true
+      }
+    }
+    fr {
+      joint_angles {
+        hip_x: -0.0083328783512115479
+        hip_y: 0.55836981534957886
+        knee: -1.1218758821487427
+      }
+      stance {
+        value: true
+      }
+    }
+    hl {
+      joint_angles {
+        hip_x: 0.00011429694859543815
+        hip_y: 0.657123327255249
+        knee: -1.3056950569152832
+      }
+      stance {
+        value: true
+      }
+    }
+    hr {
+      joint_angles {
+        hip_x: -0.00816143024712801
+        hip_y: 0.65706717967987061
+        knee: -1.3022884130477905
+      }
+      stance {
+        value: true
+      }
+    }
+  }
+}
+animation_keyframes {
+  time: 2.3
+  gripper {
+    gripper_angle {
+      value: -0.01636803150177002
+    }
+  }
+  arm {
+    joint_angles {
+      shoulder_0 {
+        value: -0.016305208206176758
+      }
+      shoulder_1 {
+        value: -2.090827465057373
+      }
+      elbow_0 {
+        value: 2.5739223957061768
+      }
+      elbow_1 {
+        value: 0.16733336448669434
+      }
+      wrist_0 {
+        value: -0.3841552734375
+      }
+      wrist_1 {
+        value: 0.4090888500213623
+      }
+    }
+  }
+  body {
+    body_pos {
+      x {
+        value: 3.1038426759888438e-06
+      }
+      y {
+        value: -1.6082435960740327e-06
+      }
+      z {
+        value: -5.5629376904953176e-07
+      }
+    }
+    quaternion {
+      x: 4.2231023531066895e-06
+      y: -3.1674124167854991e-06
+      z: -1.1452209131008307e-05
+      w: 0.99999999992048982
+    }
+  }
+  legs {
+    fl {
+      joint_angles {
+        hip_x: 0.0014610147336497903
+        hip_y: 0.56382119655609131
+        knee: -1.1218758821487427
+      }
+      stance {
+        value: true
+      }
+    }
+    fr {
+      joint_angles {
+        hip_x: -0.0083328783512115479
+        hip_y: 0.55836981534957886
+        knee: -1.1218758821487427
+      }
+      stance {
+        value: true
+      }
+    }
+    hl {
+      joint_angles {
+        hip_x: 0.00011429694859543815
+        hip_y: 0.657123327255249
+        knee: -1.3056950569152832
+      }
+      stance {
+        value: true
+      }
+    }
+    hr {
+      joint_angles {
+        hip_x: -0.00816143024712801
+        hip_y: 0.65706717967987061
+        knee: -1.3022884130477905
+      }
+      stance {
+        value: true
+      }
+    }
+  }
+}
+
+animation_keyframes {
+  time: 3
+  gripper {
+    gripper_angle {
+      value: -0.020934104919433594
+    }
+  }
+  arm {
+    joint_angles {
+      shoulder_0 {
+        value: 0.85172867774963379
+      }
+      shoulder_1 {
+        value: -1.7045739889144897
+      }
+      elbow_0 {
+        value: 2.4585063457489014
+      }
+      elbow_1 {
+        value: 1.7280856370925903
+      }
+      wrist_0 {
+        value: 0.52018117904663086
+      }
+      wrist_1 {
+        value: -1.626065731048584
+      }
+    }
+  }
+  body {
+    body_pos {
+      x {
+        value: 3.6702247234732255e-06
+      }
+      y {
+        value: -4.3460841878673051e-06
+      }
+      z {
+        value: 4.5420529001249932e-05
+      }
+    }
+    quaternion {
+      x: -1.2407556643073118e-05
+      y: 5.10289003140075e-06
+      z: 1.1343788659715294e-05
+      w: 0.99999999984566557
+    }
+  }
+  legs {
+    fl {
+      joint_angles {
+        hip_x: 0.13501273095607758
+        hip_y: 0.51713705062866211
+        knee: -1.0425084829330444
+      }
+      stance {
+        value: true
+      }
+    }
+    fr {
+      joint_angles {
+        hip_x: -0.093656152486801147
+        hip_y: 0.54669636487960815
+        knee: -1.0425084829330444
+      }
+      stance {
+        value: true
+      }
+    }
+    hl {
+      joint_angles {
+        hip_x: 0.14797870814800262
+        hip_y: 0.60670018196105957
+        knee: -1.2186098098754883
+      }
+      stance {
+        value: true
+      }
+    }
+    hr {
+      joint_angles {
+        hip_x: -0.10379903763532639
+        hip_y: 0.63360905647277832
+        knee: -1.2774732112884521
+      }
+      stance {
+        value: true
+      }
+    }
+  }
+}
+animation_keyframes {
+  time: 3.5
+  gripper {
+    gripper_angle {
+      value: -0.020934104919433594
+    }
+  }
+  arm {
+    joint_angles {
+      shoulder_0 {
+        value: 0.85172867774963379
+      }
+      shoulder_1 {
+        value: -1.7045739889144897
+      }
+      elbow_0 {
+        value: 2.4585063457489014
+      }
+      elbow_1 {
+        value: 1.7280856370925903
+      }
+      wrist_0 {
+        value: 0.52018117904663086
+      }
+      wrist_1 {
+        value: -1.626065731048584
+      }
+    }
+  }
+  body {
+    body_pos {
+      x {
+        value: 3.6702247234732255e-06
+      }
+      y {
+        value: -4.3460841878673051e-06
+      }
+      z {
+        value: 4.5420529001249932e-05
+      }
+    }
+    quaternion {
+      x: -1.2407556643073118e-05
+      y: 5.10289003140075e-06
+      z: 1.1343788659715294e-05
+      w: 0.99999999984566557
+    }
+  }
+  legs {
+    fl {
+      joint_angles {
+        hip_x: 0.13501273095607758
+        hip_y: 0.51713705062866211
+        knee: -1.0425084829330444
+      }
+      stance {
+        value: true
+      }
+    }
+    fr {
+      joint_angles {
+        hip_x: -0.093656152486801147
+        hip_y: 0.54669636487960815
+        knee: -1.0425084829330444
+      }
+      stance {
+        value: true
+      }
+    }
+    hl {
+      joint_angles {
+        hip_x: 0.14797870814800262
+        hip_y: 0.60670018196105957
+        knee: -1.2186098098754883
+      }
+      stance {
+        value: true
+      }
+    }
+    hr {
+      joint_angles {
+        hip_x: -0.10379903763532639
+        hip_y: 0.63360905647277832
+        knee: -1.2774732112884521
+      }
+      stance {
+        value: true
+      }
+    }
+  }
+}
+animation_keyframes {
+  time: 4
+  gripper {
+    gripper_angle {
+      value: -0.02088618278503418
+    }
+  }
+  arm {
+    joint_angles {
+      shoulder_0 {
+        value: -0.65725874900817871
+      }
+      shoulder_1 {
+        value: -1.3626511096954346
+      }
+      elbow_0 {
+        value: 2.406886100769043
+      }
+      elbow_1 {
+        value: 1.1008520126342773
+      }
+      wrist_0 {
+        value: -1.272101879119873
+      }
+      wrist_1 {
+        value: -0.74130535125732422
+      }
+    }
+  }
+  body {
+    body_pos {
+      x {
+        value: 4.5975179214785555e-06
+      }
+      y {
+        value: 2.7150370561779269e-06
+      }
+      z {
+        value: -6.4502879870698138e-08
+      }
+    }
+    quaternion {
+      x: -4.7920209858769165e-06
+      y: -1.8926969499287104e-06
+      z: -5.3228616207281954e-09
+      w: 0.99999999998672728
+    }
+  }
+  legs {
+    fl {
+      joint_angles {
+        hip_x: 0.097256883978843689
+        hip_y: 0.79218769073486328
+        knee: -1.6113113164901733
+      }
+      stance {
+        value: true
+      }
+    }
+    fr {
+      joint_angles {
+        hip_x: -0.17485330998897552
+        hip_y: 0.75634938478469849
+        knee: -1.6113113164901733
+      }
+      stance {
+        value: true
+      }
+    }
+    hl {
+      joint_angles {
+        hip_x: 0.10694864392280579
+        hip_y: 0.839711606502533
+        knee: -1.7089558839797974
+      }
+      stance {
+        value: true
+      }
+    }
+    hr {
+      joint_angles {
+        hip_x: -0.19234879314899445
+        hip_y: 0.79866218566894531
+        knee: -1.6452128887176514
+      }
+      stance {
+        value: true
+      }
+    }
+  }
+}
+animation_keyframes {
+  time: 5.2
+  gripper {
+    gripper_angle {
+      value: -0.02088618278503418
+    }
+  }
+  arm {
+    joint_angles {
+      shoulder_0 {
+        value: -0.65725874900817871
+      }
+      shoulder_1 {
+        value: -1.3626511096954346
+      }
+      elbow_0 {
+        value: 2.406886100769043
+      }
+      elbow_1 {
+        value: 1.1008520126342773
+      }
+      wrist_0 {
+        value: -1.272101879119873
+      }
+      wrist_1 {
+        value: -0.74130535125732422
+      }
+    }
+  }
+  body {
+    body_pos {
+      x {
+        value: 4.5975179214785555e-06
+      }
+      y {
+        value: 2.7150370561779269e-06
+      }
+      z {
+        value: -6.4502879870698138e-08
+      }
+    }
+    quaternion {
+      x: -4.7920209858769165e-06
+      y: -1.8926969499287104e-06
+      z: -5.3228616207281954e-09
+      w: 0.99999999998672728
+    }
+  }
+  legs {
+    fl {
+      joint_angles {
+        hip_x: 0.097256883978843689
+        hip_y: 0.79218769073486328
+        knee: -1.6113113164901733
+      }
+      stance {
+        value: true
+      }
+    }
+    fr {
+      joint_angles {
+        hip_x: -0.17485330998897552
+        hip_y: 0.75634938478469849
+        knee: -1.6113113164901733
+      }
+      stance {
+        value: true
+      }
+    }
+    hl {
+      joint_angles {
+        hip_x: 0.10694864392280579
+        hip_y: 0.839711606502533
+        knee: -1.7089558839797974
+      }
+      stance {
+        value: true
+      }
+    }
+    hr {
+      joint_angles {
+        hip_x: -0.19234879314899445
+        hip_y: 0.79866218566894531
+        knee: -1.6452128887176514
+      }
+      stance {
+        value: true
+      }
+    }
+  }
+}
+animation_keyframes {
+  time: 7
+  gripper {
+    gripper_angle {
+      value: -0.020874142646789551
+    }
+  }
+  arm {
+    joint_angles {
+      shoulder_0 {
+        value: -8.0585479736328125e-05
+      }
+      shoulder_1 {
+        value: -3.1159615516662598
+      }
+      elbow_0 {
+        value: 3.1360623836517334
+      }
+      elbow_1 {
+        value: 1.5651458501815796
+      }
+      wrist_0 {
+        value: -0.0015183687210083008
+      }
+      wrist_1 {
+        value: -1.5680756568908691
+      }
+    }
+  }
+  body {
+    body_pos {
+      x {
+        value: 2.0655468098151886e-06
+      }
+      y {
+        value: -2.7316497824836361e-06
+      }
+      z {
+        value: 2.8919626526846542e-07
+      }
+    }
+    quaternion {
+      x: 6.3108124867784804e-06
+      y: 4.1426658561512877e-06
+      z: -2.7997641366995109e-06
+      w: 0.99999999996758648
+    }
+  }
+  legs {
+    fl {
+      joint_angles {
+        hip_x: 0.11484989523887634
+        hip_y: 0.45980095863342285
+        knee: -0.98329037427902222
+      }
+      stance {
+        value: true
+      }
+    }
+    fr {
+      joint_angles {
+        hip_x: -0.10885537415742874
+        hip_y: 0.45554542541503906
+        knee: -0.98329037427902222
+      }
+      stance {
+        value: true
+      }
+    }
+    hl {
+      joint_angles {
+        hip_x: 0.11940291523933411
+        hip_y: 0.45472931861877441
+        knee: -0.97769516706466675
+      }
+      stance {
+        value: true
+      }
+    }
+    hr {
+      joint_angles {
+        hip_x: -0.11440836638212204
+        hip_y: 0.44988009333610535
+        knee: -0.97587054967880249
+      }
+      stance {
+        value: true
+      }
+    }
+  }
+}
+animation_keyframes {
+  time: 10
+  gripper {
+    gripper_angle {
+      value: -0.020874142646789551
+    }
+  }
+  arm {
+    joint_angles {
+      shoulder_0 {
+        value: -8.0585479736328125e-05
+      }
+      shoulder_1 {
+        value: -3.1159615516662598
+      }
+      elbow_0 {
+        value: 3.1360623836517334
+      }
+      elbow_1 {
+        value: 1.5651458501815796
+      }
+      wrist_0 {
+        value: -0.0015183687210083008
+      }
+      wrist_1 {
+        value: -1.5680756568908691
+      }
+    }
+  }
+  body {
+    body_pos {
+      x {
+        value: 2.0655468098151886e-06
+      }
+      y {
+        value: -2.7316497824836361e-06
+      }
+      z {
+        value: 2.8919626526846542e-07
+      }
+    }
+    quaternion {
+      x: 6.3108124867784804e-06
+      y: 4.1426658561512877e-06
+      z: -2.7997641366995109e-06
+      w: 0.99999999996758648
+    }
+  }
+  legs {
+    fl {
+      joint_angles {
+        hip_x: 0.11484989523887634
+        hip_y: 0.45980095863342285
+        knee: -0.98329037427902222
+      }
+      stance {
+        value: true
+      }
+    }
+    fr {
+      joint_angles {
+        hip_x: -0.10885537415742874
+        hip_y: 0.45554542541503906
+        knee: -0.98329037427902222
+      }
+      stance {
+        value: true
+      }
+    }
+    hl {
+      joint_angles {
+        hip_x: 0.11940291523933411
+        hip_y: 0.45472931861877441
+        knee: -0.97769516706466675
+      }
+      stance {
+        value: true
+      }
+    }
+    hr {
+      joint_angles {
+        hip_x: -0.11440836638212204
+        hip_y: 0.44988009333610535
+        knee: -0.97587054967880249
+      }
+      stance {
+        value: true
+      }
+    }
+  }
+}
+controls_arm: true
+controls_legs: true
+controls_body: true
+controls_gripper: true
