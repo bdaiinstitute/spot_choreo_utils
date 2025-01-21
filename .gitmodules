@@ -1,0 +1,6 @@
+[submodule "external/spot_wrapper"]
+	path = external/spot_wrapper
+	url = https://github.com/bdaiinstitute/spot_wrapper
+[submodule "external/spot-sdk"]
+	path = external/spot-sdk
+	url = https://github.com/boston-dynamics/spot-sdk
