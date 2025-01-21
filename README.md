@@ -12,19 +12,19 @@ See the tutorials folder for walk throughs on these topics.
 ### Repo Structure
 - choreo_files: storage for example animations and choreography files, and default place that new animations are stored (gitignored)
 - docker: contains dockerfiles and scripts to setup a basic environment for choreography development
-- external: gitman installed dependencies for the spot_chore_utils repo
+- external: git submodule dependencies for the spot_chore_utils repo
 - spot_choreo_utils: core library
     - test: Unit tests for the library
 - tutorials: jupyter notebook tutorials of how to use spot_choreo_utils
 
 # Installation
-This repository uses [gitman](https://gitman.readthedocs.io/en/v1.0.2/) and Docker to manage dependencies. The easiest way to start working with spot_choreo_utils is to:
-  - pip install gitman
-  - gitman install
+This repository uses git submodules and Docker to manage dependencies. The easiest way to start working with spot_choreo_utils is to:
+  - git submodule init
+  - git submodule update
   - cd docker
   - python start_docker.py
 
-This will install gitman, download all external dependency repositories, build a docker image and start a new container with all dependencies installed. The repository is passed into the docker image as a volume so that changes will automatically pass through and persist on disk.
+This will download all external dependency repositories, build a docker image and start a new container with all dependencies installed. The repository is passed into the docker image as a volume so that changes will automatically pass through and persist on disk.
 
 For a full dependencies list see the Dockerfile and entrypoint scripts.
 

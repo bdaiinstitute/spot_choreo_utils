@@ -9,34 +9,39 @@ from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import runtime_version as _runtime_version
 from google.protobuf import symbol_database as _symbol_database
 from google.protobuf.internal import builder as _builder
-
 _runtime_version.ValidateProtobufRuntimeVersion(
-    _runtime_version.Domain.PUBLIC, 5, 29, 0, "", "spot_choreo_utils/protos/semantic_animation.proto"
+    _runtime_version.Domain.PUBLIC,
+    5,
+    29,
+    0,
+    '',
+    'spot_choreo_utils/protos/semantic_animation.proto'
 )
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b""
-    b"\n1spot_choreo_utils/protos/semantic_animation.proto\x12\x12\x61i_institute_proto\x1a+bosdyn/api/spot/choreogr"
-    b'aphy_sequence.proto"\xa0\x01\n\x12\x43ustomNamedSegment\x12\x14\n\x0csegment_name\x18\x01 \x01(\t\x12:\n\x0es'
-    b'tart_keyframe\x18\x02 \x01(\x0b\x32".bosdyn.api.spot.AnimationKeyframe\x12\x38\n\x0c\x65nd_keyfram'
-    b'e\x18\x03 \x01(\x0b\x32".bosdyn.api.spot.AnimationKeyframe"R\n\x10SemanticMetadata\x12>\n\x0enamed_segments'
-    b'\x18\x01 \x03(\x0b\x32&.ai_institute_proto.CustomNamedSegment"\x88\x01\n\x11SemanticAnimation\x12\x32\n'
-    b"\x0e\x62\x61se_animation\x18\x01 \x01(\x0b\x32\x1a.bosdyn.api.spot.Animation\x12?\n\x11semantic_metadat"
-    b"a\x18\x02 \x01(\x0b\x32$.ai_institute_proto.SemanticMetadatab\x06proto3"
-)
+from bosdyn.api.spot import choreography_sequence_pb2 as bosdyn_dot_api_dot_spot_dot_choreography__sequence__pb2
+
+
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b''\
+b'\n1spot_choreo_utils/protos/semantic_animation.proto\x12\x12\x61i_institute_proto\x1a+bosdyn/api/spot/choreogr'\
+b'aphy_sequence.proto\"\xa0\x01\n\x12\x43ustomNamedSegment\x12\x14\n\x0csegment_name\x18\x01 \x01(\t\x12:\n\x0es'\
+b'tart_keyframe\x18\x02 \x01(\x0b\x32\".bosdyn.api.spot.AnimationKeyframe\x12\x38\n\x0c\x65nd_keyfram'\
+b'e\x18\x03 \x01(\x0b\x32\".bosdyn.api.spot.AnimationKeyframe\"R\n\x10SemanticMetadata\x12>\n\x0enamed_segments'\
+b'\x18\x01 \x03(\x0b\x32&.ai_institute_proto.CustomNamedSegment\"\x88\x01\n\x11SemanticAnimation\x12\x32\n'\
+b'\x0e\x62\x61se_animation\x18\x01 \x01(\x0b\x32\x1a.bosdyn.api.spot.Animation\x12?\n\x11semantic_metadat'\
+b'a\x18\x02 \x01(\x0b\x32$.ai_institute_proto.SemanticMetadatab\x06proto3')
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, "spot_choreo_utils.protos.semantic_animation_pb2", _globals)
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'spot_choreo_utils.protos.semantic_animation_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
-    DESCRIPTOR._loaded_options = None
-    _globals["_CUSTOMNAMEDSEGMENT"]._serialized_start = 119
-    _globals["_CUSTOMNAMEDSEGMENT"]._serialized_end = 279
-    _globals["_SEMANTICMETADATA"]._serialized_start = 281
-    _globals["_SEMANTICMETADATA"]._serialized_end = 363
-    _globals["_SEMANTICANIMATION"]._serialized_start = 366
-    _globals["_SEMANTICANIMATION"]._serialized_end = 502
+  DESCRIPTOR._loaded_options = None
+  _globals['_CUSTOMNAMEDSEGMENT']._serialized_start=119
+  _globals['_CUSTOMNAMEDSEGMENT']._serialized_end=279
+  _globals['_SEMANTICMETADATA']._serialized_start=281
+  _globals['_SEMANTICMETADATA']._serialized_end=363
+  _globals['_SEMANTICANIMATION']._serialized_start=366
+  _globals['_SEMANTICANIMATION']._serialized_end=502
 # @@protoc_insertion_point(module_scope)

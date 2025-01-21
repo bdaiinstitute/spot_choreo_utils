@@ -12,7 +12,7 @@ from pathlib import Path
 
 from spot_choreo_utils.paths import get_repo_base_path
 
-SOURCE_BOSDYN_PROTOS = Path(get_repo_base_path(), "external", "spot_sdk", "protos", "bosdyn")
+SOURCE_BOSDYN_PROTOS = Path(get_repo_base_path(), "external", "spot-sdk", "protos", "bosdyn")
 
 
 def spot_choreo_proto_dir() -> Path:
