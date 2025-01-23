@@ -139,11 +139,6 @@ def conform_output_to_lint_standards(file_path: Path) -> None:
         file_handle.write(as_string)
 
 
-def install_tools() -> None:
-    """Installs the proto generation tools"""
-    os.system("pip install grpcio-tools")
-
-
 def clean_build_files(tool_working_directory: Path, build_directory: Path) -> None:
     """Remove all files from previous builds"""
     local_bosdyn_source = Path(tool_working_directory, "bosdyn")
@@ -173,6 +168,5 @@ if __name__ == "__main__":
     build_directory = Path(tool_working_directory, "build")
     proto_package_name = "spot_choreo_utils/protos"
 
-    install_tools()
     clean_build_files(tool_working_directory, build_directory)
     build_protos(tool_working_directory, build_directory, proto_package_name)
