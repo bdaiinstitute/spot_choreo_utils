@@ -1,3 +1,4 @@
+# Copyright (c) 2025 Boston Dynamics AI Institute LLC. All rights reserved.
 name: "pose_to_pose_animation"
 animation_keyframes {
   gripper {
