@@ -45,8 +45,6 @@ leg_limits_base = [
     [-0.89884456477707963539, 2.2951079663725435509],
     [-2.7929, -0.254402],
 ]
-leg_limits_hip_y = [[-0.89884456477707963539, 2.2951079663725435509]]
-leg_limits_knee = [[-2.7929, -0.254402]]
 
 idle_joint_angles = {
     "shoulder_0": 0.0,
@@ -428,6 +426,7 @@ def web_animation_loop(with_arm: bool = True) -> None:
                 for i in range(spot.model.num_arm_joints()):
                     q_arm[i] = meshcat.GetSliderValue(arm_joint_slider_names[i])
 
+                animation_keyframe_map = print_as_animation_keyframe(spot_plant, spot, plant_context, X_world_body)
                 spot_plant.SetPositions(plant_context, spot.model.arm_instance, q_arm)
                 spot.ForcedPublish(context)
 
@@ -469,10 +468,11 @@ def web_animation_loop(with_arm: bool = True) -> None:
             X_world_body = new_X_world_body
             q_ik = spot_body_inverse_kinematics(feet_on_floor, unlocked_legs, X_world_body, spot.model, plant_context)
 
+            animation_keyframe_map = print_as_animation_keyframe(spot_plant, spot, plant_context, X_world_body)
+
             if q_ik is not None:
                 t = time.localtime()
                 time.strftime("%H:%M:%S", t)
-                animation_keyframe_map = print_as_animation_keyframe(spot_plant, spot, plant_context, X_world_body)
                 spot_plant.SetPositions(plant_context, q_ik)
                 spot.ForcedPublish(context)
 

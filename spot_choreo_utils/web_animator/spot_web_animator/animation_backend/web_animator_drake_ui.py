@@ -85,8 +85,8 @@ def setup_default_drake_robot_meshcat(
     body_pose_sliders = diagram_builder.AddSystem(
         MeshcatPoseSliders(
             meshcat,
-            lower_limit=RpyXyz(roll=-0.5, pitch=-1.0, yaw=-1, x=-0.3, y=-0.5, z=0.1),
-            upper_limit=RpyXyz(roll=0.5 * np.pi, pitch=np.pi, yaw=1, x=0.3, y=0.5, z=0.6),
+            lower_limit=RpyXyz(roll=-0.5 * np.pi, pitch=-np.pi / 2, yaw=-1, x=-0.3, y=-0.5, z=0.1),
+            upper_limit=RpyXyz(roll=0.5 * np.pi, pitch=np.pi / 2, yaw=1, x=0.3, y=0.5, z=0.7),
         )
     )
     spot.Finalize(meshcat, diagram_builder)
