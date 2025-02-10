@@ -75,6 +75,7 @@ def get_joint_limits() -> Dict[str, Tuple[float, float]]:
     """Returns a map of the min/max angle for each joint"""
 
     def to_rad(th: float) -> float:
+        """Returns the radian equivalent of an angle given in degrees"""
         return float(th * np.pi / 180)
 
     all_joints = {}
