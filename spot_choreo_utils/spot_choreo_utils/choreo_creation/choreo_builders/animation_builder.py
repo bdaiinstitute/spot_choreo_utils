@@ -101,7 +101,8 @@ class AnimationBuilder:
     @property
     def animation_length_s(self) -> float:
         """Rerturns the length of the animation in seconds"""
-        keyframes = self.get_keyframes()
+        keyframes = self._animation.animation_keyframes
+
         if len(keyframes) == 0:
             return 0
         else:
@@ -166,7 +167,7 @@ class AnimationBuilder:
         """Change the animation's name"""
         self._animation.name = name
 
-    def set_logger(self, logger: Optional[Logger] = None) -> None:
+    def set_logger(self, logger: Logger) -> None:
         """Set the logger the animation builder should use"""
         self._logger = logger
 
@@ -273,7 +274,10 @@ class AnimationBuilder:
         new_keyframes = copy.deepcopy(animation_keyframes)
         # Calculate all keyframe times before performing any insertions
         if is_keyframe_timing_relative:
-            current_time_at_insertion = self.keyframe_at_index(insert_index).time
+            current_time_at_insertion = 0
+            keyframe = self.keyframe_at_index(insert_index)
+            if keyframe is not None:
+                current_time_at_insertion = keyframe.time
         else:
             current_time_at_insertion = 0
         modified_keyframe_times = [keyframe.time + current_time_at_insertion for keyframe in new_keyframes]
@@ -318,8 +322,10 @@ class AnimationBuilder:
         Replaces the keyframe at the requested index, optionally matching the current time
         """
         if match_time:
-            keyframe_time = self.keyframe_at_index(keyframe_idx).time
-            animation_keyframe.time = keyframe_time
+            keyframe = self.keyframe_at_index(keyframe_idx)
+            if keyframe:
+                keyframe_time = keyframe.time
+                animation_keyframe.time = keyframe_time
 
         # Protobufs don't allow direct overwrites, so copy to array and back
         all_keyframes = self._animation.animation_keyframes[:]
@@ -328,7 +334,7 @@ class AnimationBuilder:
         self._animation.animation_keyframes.extend(all_keyframes)
 
     def insert_keyframe_from_dict(
-        self, keyframe: Dict[str, float], start_time: [float] = None, adjust_trailing_keyframes: bool = False
+        self, keyframe: Dict[str, float], start_time: Optional[float] = None, adjust_trailing_keyframes: bool = False
     ) -> None:
         """Insert a keyframe defined by the dictionary at the requested time"""
         keyframe_proto = joint_angle_keyframe_to_proto(keyframe, start_time)
@@ -427,11 +433,18 @@ class AnimationBuilder:
 
         # Remove the time between this keyframe and the next keyframe
         if adjust_trailing_keyframes and keyframe_idx < self.keyframe_count - 1:
-            self.keyframe_at_index(keyframe_idx).time
-            self.keyframe_at_index(keyframe_idx + 1)
+            if not self.keyframe_at_index(keyframe_idx):
+                self._logger.error(f"Error accessing keyframe at index {str(keyframe_idx)}")
+                return
+            if not self.keyframe_at_index(keyframe_idx + 1):
+                self._logger.error(f"Error accessing keyframe at index {str(keyframe_idx + 1)}")
+                return
             time_between_keyframes = self.time_elapsed_between_keyframes(keyframe_idx, keyframe_idx + 1)
             for index_to_modify in range(keyframe_idx + 1, self.keyframe_count):
                 modify_keyframe = self.keyframe_at_index(index_to_modify)
+                if not modify_keyframe:
+                    self._logger.error(f"Error accessing keyframe at index {str(index_to_modify)}")
+                    return
                 modify_keyframe.time -= time_between_keyframes
 
         # Remove the keyframe
@@ -557,7 +570,7 @@ class AnimationBuilder:
         duplicates = [
             idx
             for (idx, x) in enumerate(self._animation.animation_keyframes)
-            if x.time in known_timestamps or known_timestamps.add(x.time)
+            if x.time in known_timestamps or known_timestamps.add(x.time)  # type: ignore
         ]
         for dup_idx in reversed(duplicates):
             del self._animation.animation_keyframes[dup_idx : dup_idx + 1]

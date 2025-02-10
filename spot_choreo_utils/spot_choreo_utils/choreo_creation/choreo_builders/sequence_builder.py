@@ -44,7 +44,7 @@ class SequenceBuilder:
         """Returns a list of all moves in the sequence"""
         return [move.type for move in self.raw_moves]
 
-    def set_slices_per_minute(self, slices_per_minute: int) -> int:
+    def set_slices_per_minute(self, slices_per_minute: int) -> None:
         """Update the slices per minute"""
         self._sequence.slices_per_minute = slices_per_minute
 

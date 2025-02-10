@@ -47,7 +47,7 @@ def setup_proto_build_directory(tool_working_directory: Path, build_directory: P
         os.system(f"cp {proto} {proto_package_output}")
 
 
-def build_grpc(build_directory: Path, proto_package_name: str) -> None:
+def build_grpc(build_directory: Path, proto_package_name: str) -> str:
     """
     Generate pb2 and grpc files for all AI Institute protobufs.
     The protoc generator uses these rules for generation:

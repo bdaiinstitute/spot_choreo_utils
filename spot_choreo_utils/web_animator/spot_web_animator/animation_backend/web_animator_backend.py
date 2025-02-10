@@ -3,7 +3,7 @@
 
 import time
 from copy import copy
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 import numpy.typing as npt
@@ -78,7 +78,7 @@ idle_joint_angles["start_time"] = 0
 
 def spot_body_inverse_kinematics(
     feet_on_floor: bool,
-    unlocked_legs,
+    unlocked_legs: List[FootCenterFrame],
     X_world_body: RigidTransform,
     spot_model: SpotModel,
     plant_context: Context,
@@ -160,7 +160,7 @@ def spot_body_inverse_kinematics(
         foot_position = foot_frame.CalcPoseInWorld(plant_context).translation()
         ik.AddPositionConstraint(
             foot_frame,
-            [0, 0, 0],
+            np.array([0, 0, 0]),
             spot_plant.world_frame(),
             foot_position,
             foot_position,
@@ -172,17 +172,17 @@ def spot_body_inverse_kinematics(
         support_polygon_points = np.vstack(support_polygon_points)
 
         # Scale support polygon at its center.
-        support_polygon_center = support_polygon_points.mean(axis=0)
+        support_polygon_center = support_polygon_points.mean(axis=0)  # type: ignore
         support_polygon_points -= support_polygon_center
-        support_polygon_points *= 1 - support_polygon_margin
+        support_polygon_points *= 1 - support_polygon_margin  # type: ignore
         support_polygon_points += support_polygon_center
 
         # Use the support polygon points to compute the center of mass
         # polyhedron constraint.
         lower_com_polyhedra_points = support_polygon_points.copy()
         upper_com_polyhedra_points = support_polygon_points.copy()
-        lower_com_polyhedra_points[:, 2] = MINIMUM_BODY_HEIGHT
-        upper_com_polyhedra_points[:, 2] = MAXIMUM_BODY_HEIGHT
+        lower_com_polyhedra_points[:, 2] = MINIMUM_BODY_HEIGHT  # type: ignore
+        upper_com_polyhedra_points[:, 2] = MAXIMUM_BODY_HEIGHT  # type: ignore
 
         HPolyhedron(VPolytope(np.concatenate([lower_com_polyhedra_points, upper_com_polyhedra_points]).T))
 
@@ -229,7 +229,7 @@ def web_animation_loop(with_arm: bool = True) -> None:
     animation = new_animation(idle_keyframe, keyframe_time, keyframe_count)
 
     q0_angles = []
-    unlocked_legs = []
+    unlocked_legs: List[FootCenterFrame] = []
 
     button_names = ButtonNames()
     previous_lock_front_left_button_clicks = 0
@@ -251,9 +251,9 @@ def web_animation_loop(with_arm: bool = True) -> None:
         )
 
         # These get updated as buttons are pressed on and off
-        current_sliders = []
-        base_joint_slider_names = []
-        leg_limits = []
+        current_sliders: List[str] = []
+        base_joint_slider_names: List[str] = []
+        leg_limits: List[List[float]] = []
         unlocked_legs = []
 
         previous_save_request_count = 0
@@ -476,6 +476,6 @@ def web_animation_loop(with_arm: bool = True) -> None:
                 spot_plant.SetPositions(plant_context, q_ik)
                 spot.ForcedPublish(context)
 
-        meshcat.DeleteAddedControls()
+        meshcat.DeleteAddedControls()  # type: ignore
     except KeyboardInterrupt:
         pass

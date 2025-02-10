@@ -113,7 +113,7 @@ class SemanticAnimationBuilder:
         # Check to see if this keyframe is the start or end of a semantic segment
         for named_segment in self._semantic_metadata.named_segments:
             if check_if_keyframe_poses_equivalent(named_segment.start_keyframe, current_keyframe_at_index):
-                new_index = min(keyframe_idx + 1, self.get_animation_builder().keyframe_count - 1)
+                new_index = min(keyframe_idx + 1, self._animation_builder.keyframe_count - 1)
                 named_segment.start_keyframe = self._animation_builder.keyframe_at_index(new_index)
                 break
             if check_if_keyframe_poses_equivalent(named_segment.end_keyframe, current_keyframe_at_index):

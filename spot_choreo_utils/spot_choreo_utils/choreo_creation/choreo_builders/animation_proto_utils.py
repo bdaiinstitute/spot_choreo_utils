@@ -268,7 +268,7 @@ def joint_angle_keyframe_to_proto(
     """
     joint_angle_names = protobuf_joint_angle_map()
 
-    def extract_paramaters(body_section: str):
+    def extract_paramaters(body_section: str) -> Optional[Dict[str, float]]:
         params = None
 
         if any(k in keyframe_angles.keys() for k in joint_angle_names[body_section]):
