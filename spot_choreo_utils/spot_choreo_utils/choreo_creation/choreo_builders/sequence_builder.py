@@ -4,7 +4,7 @@ import copy
 import logging
 from typing import Optional, Tuple
 
-from bosdyn.api.spot.choreography_params_pb2 import AnimateParams
+from bosdyn.api.spot.choreography_params_pb2 import AnimateParams, TwerkParams
 from bosdyn.api.spot.choreography_sequence_pb2 import (
     Animation,
     ChoreographySequence,
@@ -81,6 +81,34 @@ class SequenceBuilder:
         move_params.start_slice = start_slice
         move_params.requested_slices = requested_slices
         move_params.animate_params.CopyFrom(animation_params)
+
+        # Add to the sequence
+        self._sequence.moves.append(move_params)
+
+    def add_twerk(self, twerk_params: TwerkParams, start_time: float, duration_sec: float) -> None:
+        """Add a twerk to the sequence"""
+        if twerk_params is None:
+            if self._logger is not None:
+                self._logger.error("Can't add TwerkParams None to sequence")
+            return
+        if not twerk_params.height:
+            if self._logger is not None:
+                self._logger.error("TwerkParams height is empty, can't add to sequence")
+            return
+
+        # Re-frame from time to slices
+        slices_per_second = self._sequence.slices_per_minute / 60
+        start_slice = int(start_time * slices_per_second)
+
+        # Calculate the slices to request based on duration
+        requested_slices = max(int(duration_sec * slices_per_second), 1)
+
+        # Set up its role within the sequence
+        move_params = MoveParams()
+        move_params.type = "twerk"
+        move_params.start_slice = start_slice
+        move_params.requested_slices = requested_slices
+        move_params.twerk_params.CopyFrom(twerk_params)
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
