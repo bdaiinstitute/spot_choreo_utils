@@ -1,7 +1,7 @@
 # Copyright (c) 2024-2025  Boston Dynamics AI Institute LLC. All rights reserved.
 
 from collections import namedtuple
-from typing import Any
+from typing import Any, List, Tuple
 
 import numpy as np
 from pydrake.geometry import Meshcat
@@ -40,7 +40,9 @@ def remove_save_button(meshcat: Meshcat, button_names: ButtonNames) -> None:
     meshcat.DeleteButton(button_names.save_button_name)
 
 
-def setup_ui_buttons(meshcat: Meshcat, spot: Any, plant_context: Any, button_names: ButtonNames) -> None:
+def setup_ui_buttons(
+    meshcat: Meshcat, spot: Any, plant_context: Any, button_names: ButtonNames
+) -> Tuple[List[Any], List[Any], List[Any], List[Any]]:
     """Creates the default UI for the web animator"""
     ##Buttons to lock and unlock the legs
     body_state = spot.model.get_base_state(plant_context)

@@ -2,7 +2,7 @@
 
 import copy
 from logging import Logger
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 from bosdyn.api.spot.choreography_sequence_pb2 import Animation, AnimationKeyframe, ChoreographySequence
@@ -16,7 +16,7 @@ from spot_choreo_utils.choreo_creation.choreo_builders.spot_properties import jo
 
 
 def create_single_animation_sequence(
-    animation: [Animation | AnimationBuilder],
+    animation: Union[Animation, AnimationBuilder],
     build_settings: AnimationBuilder.BuildSettings,
     logger: Optional[Logger] = None,
 ) -> Tuple[Optional[Animation], Optional[ChoreographySequence]]:

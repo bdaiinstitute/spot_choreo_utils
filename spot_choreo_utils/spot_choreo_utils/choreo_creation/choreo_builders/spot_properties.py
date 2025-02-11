@@ -8,7 +8,7 @@ import numpy as np
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import protobuf_joint_angle_map
 
 
-def get_flattened_joint_angle_names() -> Dict[str, List[str]]:
+def get_flattened_joint_angle_names() -> List[str]:
     """Returns a map of which joint angles are part of each protobuf paramaterization"""
     joint_angle = protobuf_joint_angle_map()
     return list(chain.from_iterable(joint_angle.values()))
@@ -75,12 +75,13 @@ def get_joint_limits() -> Dict[str, Tuple[float, float]]:
     """Returns a map of the min/max angle for each joint"""
 
     def to_rad(th: float) -> float:
-        return th * np.pi / 180
+        """Returns the radian equivalent of an angle given in degrees"""
+        return float(th * np.pi / 180)
 
     all_joints = {}
 
     # Set gripper limits
-    gripper_dict = {"gripper": (-1, 0)}
+    gripper_dict = {"gripper": (-1.0, 0.0)}
     all_joints.update(gripper_dict)
 
     # Set leg limits
@@ -102,7 +103,7 @@ def get_joint_limits() -> Dict[str, Tuple[float, float]]:
     arm_limits = [
         (to_rad(-150), to_rad(180)),
         (to_rad(-180), to_rad(30)),
-        (0, to_rad(180)),
+        (0.0, to_rad(180)),
         (to_rad(-160), to_rad(160)),
         (to_rad(-105), to_rad(105)),
         (to_rad(-165), to_rad(165)),

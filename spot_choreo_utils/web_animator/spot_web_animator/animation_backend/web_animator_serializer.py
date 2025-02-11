@@ -1,10 +1,17 @@
 # Copyright (c) 2024-2025  Boston Dynamics AI Institute LLC. All rights reserved.
 
 from pathlib import Path
+from typing import Dict, Optional
 
 from bosdyn.api.spot.choreography_sequence_pb2 import (
     Animation,
     AnimationKeyframe,
+)
+from pydrake.math import RigidTransform
+from pydrake.multibody.plant import MultibodyPlant
+from pydrake.systems.framework import Context
+from spot_web_animator.systems.spot import (
+    MockSpot,
 )
 
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import (
@@ -28,7 +35,7 @@ def new_animation(idle_keyframe: AnimationKeyframe, keyframe_time: int, keyframe
     return animation
 
 
-def save_pose(keyframe, keyframe_count, keyframe_time, animation) -> None:
+def save_pose(keyframe: AnimationKeyframe, keyframe_count: int, keyframe_time: float, animation: Animation) -> None:
     """Adds the pose to the active animation and saves it to disk"""
     keyframe_count += 1
     keyframe.time = keyframe_time
@@ -47,7 +54,9 @@ def print_current_pose_as_keyframe(animation_keyframe_map: dict[str, float]) -> 
     print(animation_keyframe_map)
 
 
-def print_as_animation_keyframe(spot_plant, spot, plant_context, X_world_body):
+def print_as_animation_keyframe(
+    spot_plant: MultibodyPlant, spot: MockSpot, plant_context: Context, X_world_body: RigidTransform
+) -> Dict:
     animation_keyframe_map = {}
     arm_joint_animation_names = ["shoulder_0", "shoulder_1", "elbow_0", "elbow_1", "wrist_0", "wrist_1"]
     arm_joint_names = ["arm0_sh0", "arm0_sh1", "arm0_el0", "arm0_el1", "arm0_wr0", "arm0_wr1"]
@@ -103,7 +112,7 @@ def print_as_animation_keyframe(spot_plant, spot, plant_context, X_world_body):
     return animation_keyframe_map
 
 
-def joint_angles_to_keyframe(animation_keyframe_map):
+def joint_angles_to_keyframe(animation_keyframe_map: Dict) -> Optional[AnimationKeyframe]:
     joint_angles = animation_keyframe_map
     joint_angles["start_time"] = 0
     return joint_angle_keyframe_to_proto(joint_angles)
