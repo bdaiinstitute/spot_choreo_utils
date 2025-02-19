@@ -171,10 +171,8 @@ class SequenceBuilder:
             horizontal: target body horizontal displacement, in meters. Clamped to
                 [-0.4, 0.4]. Default is 0.05.
             roll: target body roll, in radians. Clamped to [-0.2, 0.2]. Default is 0.00.
-            pivot: which portion of the body remains stationary. 0 = front, 2 = hind,
-                3 = center. Default is center.
-            style: the velocity profile of the move. 1 = standard, 2 = fast_out,
-                3 = fast_return, 4 = square, 5 = spike, 6 = plateau. Default is standard.
+            pivot: which portion of the body remains stationary, of type Pivot enum.
+            style: the velocity profile of the move, of type SwayParams.SwayStyle enum.
             pronounced: how exaggerated the style is. The closer to 0, the closer to
                 standard style. Clamped to [0.0, 1.0]. Default is 0.5.
             hold_zero_axes: whether to maintain the previous position and rotation for
