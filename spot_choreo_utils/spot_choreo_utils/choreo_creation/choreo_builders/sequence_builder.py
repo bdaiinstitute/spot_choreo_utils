@@ -195,8 +195,6 @@ class SequenceBuilder:
         vertical = max(min(roll, 0.2), -0.2)
         horizontal = max(min(horizontal, 0.4), -0.4)
         roll = max(min(roll, 0.2), -0.2)
-        pivot = int(max(min(pivot, 3), 1))
-        style = int(max(min(style, 6), 1))
         pronounced = max(min(pronounced, 1.0), 0.0)
 
         # Construct the move-specific parameters
