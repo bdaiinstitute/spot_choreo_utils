@@ -49,21 +49,24 @@ def setup_ui_buttons(
 
     meshcat.AddButton(button_names.lock_front_left_button_name, "fl Lock")
     meshcat.GetButtonClicks(button_names.lock_front_left_button_name)
-    front_left_q0_angles = [body_state.fl_hx_q, body_state.fl_hy_q, body_state.fl_kn_q]
+    front_left_q0_angles = [body_state.front_left_hip_x_q, body_state.front_left_hip_y_q, body_state.front_left_knee_q]
 
     meshcat.AddButton(button_names.lock_front_right_button_name, "fr Lock")
     meshcat.GetButtonClicks(button_names.lock_front_right_button_name)
-    front_right_q0_angles = [body_state.fr_hx_q, body_state.fr_hy_q, body_state.fr_kn_q]
+    front_right_q0_angles = [
+        body_state.front_right_hip_x_q,
+        body_state.front_right_hip_y_q,
+        body_state.front_right_knee_q,
+    ]
 
     meshcat.AddButton(button_names.lock_hind_left_button_name, "fl Lock")
     meshcat.GetButtonClicks(button_names.lock_hind_left_button_name)
-    hind_left_q0_angles = [body_state.hl_hx_q, body_state.hl_hy_q, body_state.hl_kn_q]
+    hind_left_q0_angles = [body_state.rear_left_hip_x_q, body_state.rear_left_hip_y_q, body_state.rear_left_knee_q]
 
     meshcat.AddButton(button_names.lock_hind_right_button_name, "fr Lock")
     meshcat.GetButtonClicks(button_names.lock_hind_right_button_name)
-    hind_right_q0_angles = [body_state.hr_hx_q, body_state.hr_hy_q, body_state.hr_kn_q]
+    hind_right_q0_angles = [body_state.rear_right_hip_x_q, body_state.rear_right_hip_y_q, body_state.rear_right_knee_q]
 
-    # Printing most recent keyframe button
     meshcat.AddButton(button_names.print_button_name, "print keyframe")
     meshcat.GetButtonClicks(button_names.print_button_name)
     return front_left_q0_angles, front_right_q0_angles, hind_left_q0_angles, hind_right_q0_angles

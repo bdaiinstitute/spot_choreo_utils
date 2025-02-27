@@ -1,6 +1,7 @@
 # Copyright (c) 2023-2025 Boston Dynamics AI Institute LLC. All rights reserved.
 
 from enum import Enum
+from pathlib import Path
 from typing import Dict, Optional, Union
 
 import numpy as np
@@ -25,35 +26,37 @@ from pydrake.systems.primitives import (
 from pydrake.visualization import ApplyVisualizationConfig, VisualizationConfig
 from spot_web_animator.systems.helpers import CenterOfMassVisualizer
 
-from .models import get_models_directory
+
+def get_curr_path() -> str:
+    return str(Path(__file__).parent)
 
 
 class BaseActuatorName(Enum):
-    FL_HX = "fl_hx_motor"
-    FL_HY = "fl_hy_motor"
-    FL_KN = "fl_kn_motor"
-    FR_HX = "fr_hx_motor"
-    FR_HY = "fr_hy_motor"
-    FR_KN = "fr_kn_motor"
-    HL_HX = "hl_hx_motor"
-    HL_HY = "hl_hy_motor"
-    HL_KN = "hl_kn_motor"
-    HR_HX = "hr_hx_motor"
-    HR_HY = "hr_hy_motor"
-    HR_KN = "hr_kn_motor"
+    FL_HX = "front_left_hip_x_motor"
+    FL_HY = "front_left_hip_y_motor"
+    FL_KN = "front_left_knee_motor"
+    FR_HX = "front_right_hip_x_motor"
+    FR_HY = "front_right_hip_y_motor"
+    FR_KN = "front_right_knee_motor"
+    HL_HX = "rear_left_hip_x_motor"
+    HL_HY = "rear_left_hip_y_motor"
+    HL_KN = "rear_left_knee_motor"
+    HR_HX = "rear_right_hip_x_motor"
+    HR_HY = "rear_right_hip_y_motor"
+    HR_KN = "rear_right_knee_motor"
 
 
 class ArmActuatorName(Enum):
-    ARM0_sh0 = "arm0_sh0_motor"
-    ARM0_sh1 = "arm0_sh1_motor"
-    ARM0_el0 = "arm0_el0_motor"
-    ARM0_el1 = "arm0_el1_motor"
-    ARM0_wr0 = "arm0_wr0_motor"
-    ARM0_wr1 = "arm0_wr1_motor"
+    ARM_sh0 = "arm_sh0_motor"
+    ARM_sh1 = "arm_sh1_motor"
+    ARM_el0 = "arm_el0_motor"
+    ARM_el1 = "arm_el1_motor"
+    ARM_wr0 = "arm_wr0_motor"
+    ARM_wr1 = "arm_wr1_motor"
 
 
 class GripperActuatorName(Enum):
-    ARM0_f1x = "arm0_f1x_motor"
+    ARM_f1x = "arm_f1x_motor"
 
 
 SpotPDGainsType = Dict[
@@ -71,7 +74,7 @@ class FootCenterFrame(Enum):
 
 def read_default_joint_configurations() -> Dict:
     """Returns the loaded joint configurations."""
-    with open(get_models_directory() + "/spot/joint_configurations.yaml", "r") as f:
+    with open(get_curr_path() + "/config/joint_configurations.yaml", "r") as f:
         joint_configuration = yaml.safe_load(f)
     return joint_configuration
 
@@ -108,22 +111,26 @@ class SpotModel:
 
         # Loading models.
         parser = Parser(self._plant)
-        parser.package_map().AddPackageXml(get_models_directory() + "/spot/package.xml")
+        parser.package_map().AddPackageXml(get_curr_path() + "/external/spot_description/package.xml")
         self.has_arm = has_arm
-        self.base_instance = parser.AddModels(get_models_directory() + "/spot/urdf/spot.urdf")[0]
+        self.base_instance = parser.AddModels(get_curr_path() + "/external/spot_description/urdf/out/spot.urdf")[0]
         self.arm_instance = None
         self.gripper_instance = None
         if has_arm:
-            self.arm_instance = parser.AddModels(get_models_directory() + "/spot/urdf/spot_arm.urdf")[0]
+            self.arm_instance = parser.AddModels(
+                get_curr_path() + "/external/spot_description/urdf/out/standalone_arm.urdf"
+            )[0]
             self._plant.WeldFrames(
                 self._plant.GetFrameByName("body", self.base_instance),
-                self._plant.GetFrameByName("arm0_body_link", self.arm_instance),
+                self._plant.GetFrameByName("body", self.arm_instance),
             )
 
-            self.gripper_instance = parser.AddModels(get_models_directory() + "/spot/urdf/spot_gripper.urdf")[0]
+            self.gripper_instance = parser.AddModels(
+                get_curr_path() + "/external/spot_description/urdf/out/standalone_gripper.urdf"
+            )[0]
             self._plant.WeldFrames(
-                self._plant.GetFrameByName("arm0_link_wr1", self.arm_instance),
-                self._plant.GetFrameByName("arm0_link_wr1", self.gripper_instance),
+                self._plant.GetFrameByName("arm_link_wr1", self.arm_instance),
+                self._plant.GetFrameByName("arm_link_wr1", self.gripper_instance),
             )
 
             # Filter collisions between arm shoulder link and the body link,
@@ -139,13 +146,13 @@ class SpotModel:
             wrist_and_jaw_geometry_ids_to_filter = []
             for gid in inspector.GetGeometryIds(GeometrySet(inspector.GetAllGeometryIds()), Role.kProximity):
                 gid_name = inspector.GetName(inspector.GetFrameId(gid))
-                if "body" in gid_name or "arm0_link_sh0" in gid_name:
+                if "body" in gid_name or "arm_link_sh0" in gid_name:
                     body_and_shoulder_geometry_ids_to_filter.append(gid)
 
-                if "arm0_link_wr1" in gid_name or "arm0_link_fngr" in gid_name:
+                if "arm_link_wr1" in gid_name or "arm_link_fngr" in gid_name:
                     wrist_and_finger_geometry_ids_to_filter.append(gid)
 
-                if "arm0_link_wr1" in gid_name or "arm0_link_jaw" in gid_name:
+                if "arm_link_wr1" in gid_name or "arm_link_jaw" in gid_name:
                     wrist_and_jaw_geometry_ids_to_filter.append(gid)
 
             filter_manager.Apply(

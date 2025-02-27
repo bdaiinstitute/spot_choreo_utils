@@ -53,6 +53,7 @@ idle_joint_angles = {
     "elbow_1": 1.57,
     "wrist_0": -0.00001,
     "wrist_1": -1.57,
+    "gripper": -0.054,
     "front_left_hip_x": 0.12,
     "front_left_hip_y": 0.72,
     "front_left_knee": -1.45,
@@ -261,7 +262,8 @@ def web_animation_loop(with_arm: bool = True) -> None:
         keyframe_time = 1
 
         body_state = spot.model.get_base_state(plant_context)
-        q0_angles = [body_state.fl_hx_q, body_state.fl_hy_q, body_state.fl_kn_q]
+        # q0_angles = [body_state.fl_hx_q, body_state.fl_hy_q, body_state.fl_kn_q]
+        q0_angles = [body_state.front_left_hip_x_q, body_state.front_left_hip_y_q, body_state.front_left_knee_q]
 
         for i in range(len(base_joint_slider_names)):
             meshcat.AddSlider(
