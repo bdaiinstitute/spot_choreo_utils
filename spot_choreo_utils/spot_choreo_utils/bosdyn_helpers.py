@@ -12,13 +12,13 @@ from spatialmath import (
 from spot_wrapper.wrapper import SpotWrapper
 
 ROBOT_STATE_TO_ANIMATION_NAME = {
-    "arm0.sh0": "shoulder_0",
-    "arm0.sh1": "shoulder_1",
-    "arm0.el0": "elbow_0",
-    "arm0.el1": "elbow_1",
-    "arm0.wr0": "wrist_0",
-    "arm0.wr1": "wrist_1",
-    "arm0.f1x": "gripper",
+    "arm.sh0": "shoulder_0",
+    "arm.sh1": "shoulder_1",
+    "arm.el0": "elbow_0",
+    "arm.el1": "elbow_1",
+    "arm.wr0": "wrist_0",
+    "arm.wr1": "wrist_1",
+    "arm.f1x": "gripper",
     "body_pos_x": "body_pos_x",
     "body_pos_y": "body_pos_y",
     "body_pos_z": "body_pos_z",

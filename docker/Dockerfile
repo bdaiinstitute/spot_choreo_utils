@@ -3,6 +3,9 @@ FROM ubuntu:22.04
 
 USER root
 
+
+ARG DEBIAN_FRONTEND=noninteractive
+
 # Setup python and notebooks
 RUN apt-get update && apt-get install -y --no-install-recommends \
   python-is-python3 \
@@ -10,7 +13,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   vim \
   sudo \
   ffmpeg \
-  git
+  git \ 
+  curl \
+  gnupg2 \
+  lsb-release
+
+# Install ROS2 and Colcon
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+RUN echo "deb http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2-latest.list
+RUN apt-get update && apt-get install -y \
+  ros-humble-desktop \
+  ros-humble-xacro \
+  python3-colcon-common-extensions
+RUN echo "source /opt/ros/humble/setup.bash" >> /etc/bash.bashrc
 
 ENV SETUP_DIR="/setup"
 RUN mkdir /workspaces

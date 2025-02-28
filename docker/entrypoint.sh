@@ -21,5 +21,16 @@ cd /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/
 bash ./scripts/install_prereqs
 pip install -e .
 
+cd /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description
+rm -rf build install log
+ls
+source /opt/ros/humble/setup.bash
+colcon build
+source install/setup.bash
+ros2 run xacro xacro -o ./urdf/out/spot.urdf ./urdf/spot.urdf.xacro include_transmissions:=true
+ros2 run xacro xacro -o ./urdf/out/standalone_arm.urdf ./urdf/standalone_arm.urdf.xacro include_transmissions:=true gripperless:=true
+ros2 run xacro xacro -o ./urdf/out/standalone_gripper.urdf ./urdf/standalone_gripper.urdf.xacro include_transmissions:=true
+
+
 # enter the container as the newly configured user
 /bin/bash -c "su - developer"
