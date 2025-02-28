@@ -14,26 +14,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   sudo \
   ffmpeg \
   git \ 
-<<<<<<< HEAD
   curl \
   gnupg2 \
   lsb-release
-=======
-	curl \
-	gnupg2 \
-	lsb-release
->>>>>>> 8f1bd25 (docker now generates spot urdfs via xacro)
 
 # Install ROS2 and Colcon
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
 RUN echo "deb http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2-latest.list
 RUN apt-get update && apt-get install -y \
   ros-humble-desktop \
-<<<<<<< HEAD
   ros-humble-xacro \
-=======
-	ros-humble-xacro \
->>>>>>> 8f1bd25 (docker now generates spot urdfs via xacro)
   python3-colcon-common-extensions
 RUN echo "source /opt/ros/humble/setup.bash" >> /etc/bash.bashrc
 
