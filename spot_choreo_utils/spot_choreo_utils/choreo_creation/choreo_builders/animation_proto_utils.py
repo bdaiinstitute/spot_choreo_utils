@@ -106,6 +106,13 @@ def build_arm_params(
 ) -> ArmJointAngles:
     """Create the Arm's animation paramater protobuf"""
 
+    # print(f"debug, build_arm_params, elbow_0: {elbow_0}")
+    # print(f"debug, build_arm_params, elbow_1: {elbow_1}")
+    # print(f"debug, build_arm_params, shoulder_0: {shoulder_0}")
+    # print(f"debug, build_arm_params, shoulder_1: {shoulder_1}")
+    # print(f"debug, build_arm_params, wrist_0: {wrist_0}")
+    # print(f"debug, build_arm_params, wrist_1: {wrist_1}")
+
     # Protos and the animation service don't play nicely with 0
     elbow_0 = ensure_protobuf_compliance(elbow_0)
     elbow_1 = ensure_protobuf_compliance(elbow_1)
@@ -114,22 +121,43 @@ def build_arm_params(
     wrist_0 = ensure_protobuf_compliance(wrist_0)
     wrist_1 = ensure_protobuf_compliance(wrist_1)
 
+    # print(f"debug, build_arm_params, after pb compliance, elbow_0: {elbow_0}")
+    # print(f"debug, build_arm_params, after pb compliance, elbow_1: {elbow_1}")
+    # print(f"debug, build_arm_params, after pb compliance, shoulder_0: {shoulder_0}")
+    # print(f"debug, build_arm_params, after pb compliance, shoulder_1: {shoulder_1}")
+    # print(f"debug, build_arm_params, after pb compliance, wrist_0: {wrist_0}")
+    # print(f"debug, build_arm_params, after pb compliance, wrist_1: {wrist_1}")
+
     arm_joint_angles = ArmJointAngles()
 
     if elbow_0:
         arm_joint_angles.elbow_0.CopyFrom(DoubleValue(value=elbow_0))
+    # else:
+    #     arm_joint_angles.elbow_0.CopyFrom(DoubleValue(value=1e-06))
     if elbow_1:
         arm_joint_angles.elbow_1.CopyFrom(DoubleValue(value=elbow_1))
+    # else:
+    #     arm_joint_angles.elbow_1.CopyFrom(DoubleValue(value=1e-06))
 
     if shoulder_0:
         arm_joint_angles.shoulder_0.CopyFrom(DoubleValue(value=shoulder_0))
+    # else:
+    #     arm_joint_angles.shoulder_0.CopyFrom(DoubleValue(value=1e-06))
     if shoulder_1:
         arm_joint_angles.shoulder_1.CopyFrom(DoubleValue(value=shoulder_1))
+    # else:
+    #     arm_joint_angles.shoulder_1.CopyFrom(DoubleValue(value=1e-06))
 
     if wrist_0:
         arm_joint_angles.wrist_0.CopyFrom(DoubleValue(value=wrist_0))
+    # else:
+    #     arm_joint_angles.wrist_0.CopyFrom(DoubleValue(value=1e-06))
     if wrist_1:
         arm_joint_angles.wrist_1.CopyFrom(DoubleValue(value=wrist_1))
+    # else:
+    #     arm_joint_angles.wrist_1.CopyFrom(DoubleValue(value=1e-06))
+
+    # print(f"debug, arm_joint_angles: {arm_joint_angles}")
 
     arm_animation = AnimateArm()
     arm_animation.joint_angles.CopyFrom(arm_joint_angles)
@@ -274,6 +302,7 @@ def joint_angle_keyframe_to_proto(
 
         if any(k in keyframe_angles.keys() for k in joint_angle_names[body_section]):
             params = {k: keyframe_angles[k] for k in joint_angle_names[body_section] if k in keyframe_angles.keys()}
+            print(f"debug, params: {params}")
         return params
 
     keyframe_proto = AnimationKeyframe()
@@ -289,10 +318,13 @@ def joint_angle_keyframe_to_proto(
 
     if params := extract_paramaters("gripper"):
         keyframe_proto.gripper.CopyFrom(build_gripper_params(**params))
+        print("found grip params")
     if params := extract_paramaters("arm"):
         keyframe_proto.arm.CopyFrom(build_arm_params(**params))
+        print("found arm params")
     if params := extract_paramaters("body"):
         keyframe_proto.body.CopyFrom(build_body_params(**params))
+        print("found body params")
 
     front_left_params = extract_paramaters("front_left_leg")
     front_right_params = extract_paramaters("front_right_leg")
