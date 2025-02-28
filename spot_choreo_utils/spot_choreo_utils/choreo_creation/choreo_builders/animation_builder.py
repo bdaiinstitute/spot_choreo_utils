@@ -519,6 +519,45 @@ class AnimationBuilder:
                 return False, f"Keyframe timestamps must be monotonically increasing. Error at keyframe {idx}"
             last_time_seen = keyframe.time
 
+            necessary_joint_angles_fields = ["shoulder_0", "shoulder_1", "elbow_0", "elbow_1", "wrist_0", "wrist_1"]
+
+            print("\n validate protobuf debugging\n")
+            is_protobuf = hasattr(keyframe, "ListFields")
+            print(f"\n keyframe idx: {idx}, is_protobuf: {is_protobuf}")
+            if is_protobuf:
+                property_names = [descriptor.name for descriptor, _ in keyframe.ListFields()]
+                if "arm" not in property_names:
+                    return False, "'Arm' field must be specified in every keyframe"
+                else:
+                    arm = getattr(keyframe, "arm", None)
+                    if arm:
+                        joint_angles = getattr(arm, "joint_angles", None)
+                        if joint_angles is not None:
+                            existing_fields = [descriptor.name for descriptor, _ in joint_angles.ListFields()]
+                            print(f"existing joint_angles fields: {existing_fields}")
+                            missing_fields = [
+                                field for field in necessary_joint_angles_fields if field not in existing_fields
+                            ]
+                            for missing_field in missing_fields:
+                                print(f"missing field: {missing_field}. Adding it now.")
+                                getattr(joint_angles, missing_field).value = 1e-06
+                            post_fix_fields = [descriptor.name for descriptor, _ in joint_angles.ListFields()]
+                            print(f"post-fix joint_angles fields: {post_fix_fields}")
+
+                #     joint_angles = getattr(
+                # for prop_idx, property_name in enumerate(property_names):
+                #     print(f"property_name #{prop_idx}: {property_name}")
+                #     property_value = getattr(keyframe, property_name, None)
+                #     if property_value is not None:
+                #         if hasattr(property_value, "ListFields"):
+                #             sub_property_names = [descriptor.name for descriptor, _ in property_value.ListFields()]
+                #             for sub_prop_idx, sub_property_name in enumerate(sub_property_names):
+                #                 sub_property_value = getattr(property_value, sub_property_name, None)
+                #                 print(f"sub_property_name #{sub_prop_idx}:
+                # {sub_property_name}, value: {sub_property_value}")
+                #
+                #
+
             if keyframe.HasField("gripper") and not self._animation.controls_gripper:
                 return False, "Animation controls gripper, but controls_gripper paramater not set"
             if keyframe.HasField("arm") and not self._animation.controls_arm:
