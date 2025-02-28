@@ -3,18 +3,6 @@
 base:
   stand:
     joint_positions:
-      # fl_hx: 0.12
-      # fl_hy: 0.72
-      # fl_kn: -1.45
-      # fr_hx: -0.12
-      # fr_hy: 0.72
-      # fr_kn: -1.45
-      # hl_hx: 0.12
-      # hl_hy: 0.72
-      # hl_kn: -1.45
-      # hr_hx: -0.12
-      # hr_hy: 0.72
-      # hr_kn: -1.45
       front_left_hip_x: 0.12
       front_left_hip_y: 0.72
       front_left_knee: -1.45
