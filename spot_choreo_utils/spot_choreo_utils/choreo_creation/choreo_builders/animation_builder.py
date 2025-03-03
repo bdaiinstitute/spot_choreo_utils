@@ -16,6 +16,7 @@ from bosdyn.api.spot.choreography_sequence_pb2 import (
     Animation,
     AnimationKeyframe,
 )
+from google.protobuf.wrappers_pb2 import DoubleValue
 
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import (
     build_gripper_params,
@@ -184,6 +185,12 @@ class AnimationBuilder:
         if build_settings.remove_duplicate_timestamps:
             self._remove_duplicate_timestamps()
 
+        if build_settings.only_output_valid:
+            res, msg = self.validate()
+            if not res:
+                self._logger.error(f"Failed to build animation: {msg}")
+                return None
+
         # Create new copy for procedural edits that would conflict with
         # future builder operations
         output_animation = copy.deepcopy(self._animation)
@@ -191,12 +198,6 @@ class AnimationBuilder:
         if build_settings.apply_stance_to_all_keyframes:
             for keyframe in output_animation.animation_keyframes:
                 self.add_stance_to_keyframe(keyframe)
-
-        if build_settings.only_output_valid:
-            res, msg = self.validate()
-            if not res:
-                self._logger.error(f"Failed to build animation: {msg}")
-                return None
 
         if build_settings.hold_final_pose_s:
             last_keyframe = self._animation.animation_keyframes[-1]
@@ -518,6 +519,25 @@ class AnimationBuilder:
             if keyframe.time <= last_time_seen:
                 return False, f"Keyframe timestamps must be monotonically increasing. Error at keyframe {idx}"
             last_time_seen = keyframe.time
+
+            necessary_joint_angles_fields = ["shoulder_0", "shoulder_1", "elbow_0", "elbow_1", "wrist_0", "wrist_1"]
+
+            is_protobuf = hasattr(keyframe, "ListFields")
+            if is_protobuf:
+                property_names = [descriptor.name for descriptor, _ in keyframe.ListFields()]
+                if "arm" not in property_names:
+                    return False, "'Arm' field must be specified in every keyframe"
+                else:
+                    arm = getattr(keyframe, "arm", None)
+                    if arm:
+                        joint_angles = getattr(arm, "joint_angles", None)
+                        if joint_angles is not None:
+                            existing_fields = [descriptor.name for descriptor, _ in joint_angles.ListFields()]
+                            missing_fields = [
+                                field for field in necessary_joint_angles_fields if field not in existing_fields
+                            ]
+                            for missing_field in missing_fields:
+                                getattr(joint_angles, missing_field).CopyFrom(DoubleValue(value=1e-06))
 
             if keyframe.HasField("gripper") and not self._animation.controls_gripper:
                 return False, "Animation controls gripper, but controls_gripper paramater not set"
