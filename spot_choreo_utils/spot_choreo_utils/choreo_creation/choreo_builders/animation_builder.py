@@ -16,6 +16,7 @@ from bosdyn.api.spot.choreography_sequence_pb2 import (
     Animation,
     AnimationKeyframe,
 )
+from google.protobuf.wrappers_pb2 import DoubleValue
 
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import (
     build_gripper_params,
@@ -541,7 +542,7 @@ class AnimationBuilder:
                                 field for field in necessary_joint_angles_fields if field not in existing_fields
                             ]
                             for missing_field in missing_fields:
-                                getattr(joint_angles, missing_field).value = 1e-06
+                                getattr(joint_angles, missing_field).CopyFrom(DoubleValue(value=1e-06))
 
             if keyframe.HasField("gripper") and not self._animation.controls_gripper:
                 return False, "Animation controls gripper, but controls_gripper paramater not set"
