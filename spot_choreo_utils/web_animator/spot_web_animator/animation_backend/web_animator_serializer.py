@@ -58,8 +58,13 @@ def print_as_animation_keyframe(
     spot_plant: MultibodyPlant, spot: MockSpot, plant_context: Context, X_world_body: RigidTransform
 ) -> Dict:
     animation_keyframe_map = {}
+
+    animation_keyframe_map["gripper"] = spot_plant.GetJointByName("arm_f1x", spot.model.gripper_instance).get_angle(
+        plant_context
+    )
+
     arm_joint_animation_names = ["shoulder_0", "shoulder_1", "elbow_0", "elbow_1", "wrist_0", "wrist_1"]
-    arm_joint_names = ["arm0_sh0", "arm0_sh1", "arm0_el0", "arm0_el1", "arm0_wr0", "arm0_wr1"]
+    arm_joint_names = ["arm_sh0", "arm_sh1", "arm_el0", "arm_el1", "arm_wr0", "arm_wr1"]
     for idx, joint in enumerate(arm_joint_names):
         joint_angle = spot_plant.GetJointByName(joint, spot.model.arm_instance).get_angle(plant_context)
         animation_keyframe_map[arm_joint_animation_names[idx]] = joint_angle
@@ -79,18 +84,18 @@ def print_as_animation_keyframe(
         "rear_right_knee",
     ]
     body_joints_drake_name = [
-        "fl_hx",
-        "fl_hy",
-        "fl_kn",
-        "fr_hx",
-        "fr_hy",
-        "fr_kn",
-        "hl_hx",
-        "hl_hy",
-        "hl_kn",
-        "hr_hx",
-        "hr_hy",
-        "hr_kn",
+        "front_left_hip_x",
+        "front_left_hip_y",
+        "front_left_knee",
+        "front_right_hip_x",
+        "front_right_hip_y",
+        "front_right_knee",
+        "rear_left_hip_x",
+        "rear_left_hip_y",
+        "rear_left_knee",
+        "rear_right_hip_x",
+        "rear_right_hip_y",
+        "rear_right_knee",
     ]
 
     for name_idx, joint_name in enumerate(body_joints_drake_name):
