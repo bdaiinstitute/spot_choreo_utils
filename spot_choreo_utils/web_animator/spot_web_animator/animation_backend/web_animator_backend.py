@@ -461,7 +461,7 @@ def web_animation_loop(with_arm: bool = True) -> None:
                 print_current_pose_as_keyframe(animation_keyframe_map)
 
             if X_world_body.IsExactlyEqualTo(new_X_world_body):
-                time.sleep(1e-3)
+                time.sleep(0.016)
                 continue
 
             # Compute Ik.
