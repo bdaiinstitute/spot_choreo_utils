@@ -17,6 +17,7 @@ from bosdyn.api.spot.choreography_sequence_pb2 import (
     ChoreographySequence,
     MoveParams,
 )
+from google.protobuf.wrappers_pb2 import DoubleValue
 
 
 class SequenceBuilder:
@@ -126,6 +127,50 @@ class SequenceBuilder:
             else:
                 raise ValueError(f"Unsupported move type: {move_type}")
 
+    def validate_move(self, move_params: MoveParams) -> bool:
+        move_params.start_slice = max(move_params.start_slice, 0)
+        move_params.requested_slices = max(move_params.requested_slices, 0)
+
+        if move_params.type == "animation":
+            if self._logger is not None:
+                self._logger.warning("validation for animation moves not currently implemented. running anyway.")
+            return True
+
+        move_specific_validator = getattr(self, "validate_" + move_params.type, None)
+        if move_specific_validator is None:
+            raise ValueError(f"move validator not found for: {move_params.type}")
+        move_specific_params = getattr(move_params, move_params.type + "_params", None)
+        if move_specific_params is None:
+            raise ValueError(f"Move of type {move_params.type} does not contain a {move_params.type}_params member")
+
+        return move_specific_validator(move_specific_params)
+
+    def validate_rotate_body(self, params: RotateBodyParams) -> bool:
+        params.roll.CopyFrom(DoubleValue(value=max(min(params.roll.value, 0.5), -0.5)))
+        params.pitch.CopyFrom(DoubleValue(value=max(min(params.pitch.value, 0.5), -0.5)))
+        params.yaw.CopyFrom(DoubleValue(value=max(min(params.yaw.value, 0.5), -0.5)))
+        return True
+
+    def validate_sway(self, params: SwayParams) -> bool:
+        params.vertical.CopyFrom(DoubleValue(value=max(min(params.roll.value, 0.2), -0.2)))
+        params.horizontal.CopyFrom(DoubleValue(value=max(min(params.horizontal.value, 0.4), -0.4)))
+        params.roll.CopyFrom(DoubleValue(value=max(min(params.roll.value, 0.2), -0.2)))
+        params.style = max(min(params.style, 6), 0)
+        if params.style > 1:
+            params.pronounced.CopyFrom(DoubleValue(value=max(min(params.pronounced.value, 1.0), 0.0)))
+        return True
+
+    def validate_twerk(self, params: TwerkParams) -> bool:
+        params.height.CopyFrom(DoubleValue(value=max(min(params.height.value, 0.2), 0.0)))
+        return True
+
+    def validate_bourree(self, params: BourreeParams) -> bool:
+        params.velocity_x.CopyFrom(DoubleValue(value=max(min(params.velocity_x.value, 0.7), -0.7)))
+        params.velocity_y.CopyFrom(DoubleValue(value=max(min(params.velocity_y.value, 0.5), -0.5)))
+        params.yaw_rate.CopyFrom(DoubleValue(value=max(min(params.yaw_rate.value, 0.7), -0.7)))
+        params.stance_length.CopyFrom(DoubleValue(value=max(min(params.stance_length.value, 0.8), 0.15)))
+        return True
+
     def add_rotate_body(
         self,
         start_sec: float,
@@ -157,13 +202,6 @@ class SequenceBuilder:
         # Calculate the slices to request based on duration
         requested_slices = max(int(duration_sec * slices_per_second), 1)
 
-        # Sanitize inputs
-        start_sec = max(start_sec, 0)
-        duration_sec = max(start_sec, 0)
-        roll = max(min(roll, 0.5), -0.5)
-        pitch = max(min(pitch, 0.5), -0.5)
-        yaw = max(min(yaw, 0.5), -0.5)
-
         # Construct the move-specific parameters
         rotate_body_params = RotateBodyParams()
         rotate_body_params.EulerZYXValue.roll.value = roll
@@ -177,6 +215,8 @@ class SequenceBuilder:
         move_params.start_slice = start_slice
         move_params.requested_slices = requested_slices
         move_params.rotate_body_params.CopyFrom(rotate_body_params)
+
+        self.validate_move(move_params)
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -223,14 +263,6 @@ class SequenceBuilder:
         # Calculate the slices to request based on duration
         requested_slices = max(int(duration_sec * slices_per_second), 1)
 
-        # Sanitize inputs
-        start_sec = max(start_sec, 0)
-        duration_sec = max(start_sec, 0)
-        vertical = max(min(roll, 0.2), -0.2)
-        horizontal = max(min(horizontal, 0.4), -0.4)
-        roll = max(min(roll, 0.2), -0.2)
-        pronounced = max(min(pronounced, 1.0), 0.0)
-
         # Construct the move-specific parameters
         sway_params = SwayParams()
         sway_params.vertical.value = vertical
@@ -247,6 +279,8 @@ class SequenceBuilder:
         move_params.start_slice = start_slice
         move_params.requested_slices = requested_slices
         move_params.sway_params.CopyFrom(sway_params)
+
+        self.validate_move(move_params)
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -271,11 +305,6 @@ class SequenceBuilder:
         # Calculate the slices to request based on duration
         requested_slices = max(int(duration_sec * slices_per_second), 1)
 
-        # Sanitize inputs
-        start_sec = max(start_sec, 0)
-        duration_sec = max(start_sec, 0)
-        height = max(min(height, 0.2), 0.0)
-
         # Construct the move-specific parameters
         twerk_params = TwerkParams()
         twerk_params.height.value = height
@@ -286,6 +315,8 @@ class SequenceBuilder:
         move_params.start_slice = start_slice
         move_params.requested_slices = requested_slices
         move_params.twerk_params.CopyFrom(twerk_params)
+
+        self.validate_move(move_params)
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -321,14 +352,6 @@ class SequenceBuilder:
         # Calculate the slices to request based on duration
         requested_slices = max(int(duration_sec * slices_per_second), 1)
 
-        # Sanitize inputs
-        start_sec = max(start_sec, 0)
-        duration_sec = max(start_sec, 0)
-        velocity_x = max(min(velocity_x, 0.7), -0.7)
-        velocity_y = max(min(velocity_y, 0.5), -0.5)
-        yaw_rate = max(min(yaw_rate, 0.7), -0.7)
-        stance_length = max(min(stance_length, 0.8), 0.15)
-
         # Construct the move-specific parameters
         bourree_params = BourreeParams()
         bourree_params.velocity.x.value = velocity_x
@@ -342,6 +365,8 @@ class SequenceBuilder:
         move_params.start_slice = start_slice
         move_params.requested_slices = requested_slices
         move_params.bourree_params.CopyFrom(bourree_params)
+
+        self.validate_move(move_params)
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -387,4 +412,5 @@ class SequenceBuilder:
                         f" is {min_slices}-{max_slices}"
                     ),
                 )
+            self.validate_move(move)
         return True, "success"
