@@ -1,6 +1,6 @@
 # Copyright (c) 2025 Boston Dynamics AI Institute LLC. All rights reserved.
 pip==24.1.2
-setuptools==69.5.1
+setuptools==70.0.0
 wheel>=0.42.0
 toml>=0.10.2
 jupyter==1.1.1
