@@ -16,10 +16,12 @@ from bosdyn.api.spot.choreography_sequence_pb2 import (
     Animation,
     AnimationKeyframe,
 )
+from google.protobuf.wrappers_pb2 import DoubleValue
 
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import (
     build_gripper_params,
     check_if_keyframe_poses_equivalent,
+    check_if_protobuf_field_set,
     ensure_protobuf_compliance,
     joint_angle_keyframe_to_proto,
 )
@@ -184,6 +186,14 @@ class AnimationBuilder:
         if build_settings.remove_duplicate_timestamps:
             self._remove_duplicate_timestamps()
 
+        self._fill_in_missing_fields()
+
+        if build_settings.only_output_valid:
+            res, msg = self.validate()
+            if not res:
+                self._logger.error(f"Failed to build animation: {msg}")
+                return None
+
         # Create new copy for procedural edits that would conflict with
         # future builder operations
         output_animation = copy.deepcopy(self._animation)
@@ -191,12 +201,6 @@ class AnimationBuilder:
         if build_settings.apply_stance_to_all_keyframes:
             for keyframe in output_animation.animation_keyframes:
                 self.add_stance_to_keyframe(keyframe)
-
-        if build_settings.only_output_valid:
-            res, msg = self.validate()
-            if not res:
-                self._logger.error(f"Failed to build animation: {msg}")
-                return None
 
         if build_settings.hold_final_pose_s:
             last_keyframe = self._animation.animation_keyframes[-1]
@@ -574,6 +578,37 @@ class AnimationBuilder:
         ]
         for dup_idx in reversed(duplicates):
             del self._animation.animation_keyframes[dup_idx : dup_idx + 1]
+
+    def _fill_in_missing_fields(self) -> None:
+        """
+        Ensures all keyframes contain the same set of joint_angles entries,
+        so as to avoid errors thrown by BD's spot-sdk.
+        """
+
+        ## Loop 1: Collect set of all joint_angles fields that are specified in at least one keyframe
+        specified_fields = set()
+        for keyframe in self._animation.animation_keyframes:
+            is_protobuf = hasattr(keyframe, "ListFields")
+            if is_protobuf:
+                if check_if_protobuf_field_set(keyframe, "arm"):
+                    arm = getattr(keyframe, "arm")
+                    if check_if_protobuf_field_set(arm, "joint_angles"):
+                        joint_angles = getattr(arm, "joint_angles")
+                        curr_fields = {field.name for field, _ in joint_angles.ListFields()}
+                        specified_fields |= curr_fields  # union
+
+        ## Loop 2: For each keyframe, fill in missing joint_angle fields with near-zero value
+        for keyframe in self._animation.animation_keyframes:
+            is_protobuf = hasattr(keyframe, "ListFields")
+            if is_protobuf:
+                if check_if_protobuf_field_set(keyframe, "arm"):
+                    arm = getattr(keyframe, "arm")
+                    if check_if_protobuf_field_set(arm, "joint_angles"):
+                        joint_angles = getattr(arm, "joint_angles")
+                        curr_fields = {field.name for field, _ in joint_angles.ListFields()}
+                        missing_fields = specified_fields - curr_fields
+                        for field in missing_fields:
+                            getattr(joint_angles, field).CopyFrom(DoubleValue(value=1e-06))
 
     def _update_timestamps_to_robot_precision(self) -> None:
         """Match the time precision on robot"""
