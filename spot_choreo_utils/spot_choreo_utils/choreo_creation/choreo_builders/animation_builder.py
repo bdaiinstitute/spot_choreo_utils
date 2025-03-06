@@ -21,6 +21,7 @@ from google.protobuf.wrappers_pb2 import DoubleValue
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import (
     build_gripper_params,
     check_if_keyframe_poses_equivalent,
+    check_if_protobuf_field_set,
     ensure_protobuf_compliance,
     joint_angle_keyframe_to_proto,
 )
@@ -184,6 +185,8 @@ class AnimationBuilder:
         self._update_timestamps_to_robot_precision()
         if build_settings.remove_duplicate_timestamps:
             self._remove_duplicate_timestamps()
+
+        self._fill_in_missing_fields()
 
         if build_settings.only_output_valid:
             res, msg = self.validate()
@@ -520,25 +523,6 @@ class AnimationBuilder:
                 return False, f"Keyframe timestamps must be monotonically increasing. Error at keyframe {idx}"
             last_time_seen = keyframe.time
 
-            necessary_joint_angles_fields = ["shoulder_0", "shoulder_1", "elbow_0", "elbow_1", "wrist_0", "wrist_1"]
-
-            is_protobuf = hasattr(keyframe, "ListFields")
-            if is_protobuf:
-                property_names = [descriptor.name for descriptor, _ in keyframe.ListFields()]
-                if "arm" not in property_names:
-                    return False, "'Arm' field must be specified in every keyframe"
-                else:
-                    arm = getattr(keyframe, "arm", None)
-                    if arm:
-                        joint_angles = getattr(arm, "joint_angles", None)
-                        if joint_angles is not None:
-                            existing_fields = [descriptor.name for descriptor, _ in joint_angles.ListFields()]
-                            missing_fields = [
-                                field for field in necessary_joint_angles_fields if field not in existing_fields
-                            ]
-                            for missing_field in missing_fields:
-                                getattr(joint_angles, missing_field).CopyFrom(DoubleValue(value=1e-06))
-
             if keyframe.HasField("gripper") and not self._animation.controls_gripper:
                 return False, "Animation controls gripper, but controls_gripper paramater not set"
             if keyframe.HasField("arm") and not self._animation.controls_arm:
@@ -594,6 +578,37 @@ class AnimationBuilder:
         ]
         for dup_idx in reversed(duplicates):
             del self._animation.animation_keyframes[dup_idx : dup_idx + 1]
+
+    def _fill_in_missing_fields(self) -> None:
+        """
+        Ensures all keyframes contain the same set of joint_angles entries,
+        so as to avoid errors thrown by BD's spot-sdk.
+        """
+
+        ## Loop 1: Collect set of all joint_angles fields that are specified in at least one keyframe
+        specified_fields = set()
+        for keyframe in self._animation.animation_keyframes:
+            is_protobuf = hasattr(keyframe, "ListFields")
+            if is_protobuf:
+                if check_if_protobuf_field_set(keyframe, "arm"):
+                    arm = getattr(keyframe, "arm")
+                    if check_if_protobuf_field_set(arm, "joint_angles"):
+                        joint_angles = getattr(arm, "joint_angles")
+                        curr_fields = {field.name for field, _ in joint_angles.ListFields()}
+                        specified_fields |= curr_fields  # union
+
+        ## Loop 2: For each keyframe, fill in missing joint_angle fields with near-zero value
+        for keyframe in self._animation.animation_keyframes:
+            is_protobuf = hasattr(keyframe, "ListFields")
+            if is_protobuf:
+                if check_if_protobuf_field_set(keyframe, "arm"):
+                    arm = getattr(keyframe, "arm")
+                    if check_if_protobuf_field_set(arm, "joint_angles"):
+                        joint_angles = getattr(arm, "joint_angles")
+                        curr_fields = {field.name for field, _ in joint_angles.ListFields()}
+                        missing_fields = specified_fields - curr_fields
+                        for field in missing_fields:
+                            getattr(joint_angles, field).CopyFrom(DoubleValue(value=1e-06))
 
     def _update_timestamps_to_robot_precision(self) -> None:
         """Match the time precision on robot"""
