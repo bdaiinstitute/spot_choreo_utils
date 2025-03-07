@@ -597,22 +597,26 @@ class AnimationBuilder:
         ## Loop 2: Fill in all fields with non-zero values
         curr_fields_dict: Dict[str, float] = {}
         for idx, keyframe in enumerate(self._animation.animation_keyframes):
+            keyframe_has_been_edited = False
             ## Fix the flattened keyframe
             curr_fields_dict = flatten_keyframe_to_dictionary(keyframe)
             for field in specified_fields:
                 safe_default_value = 1e-6 if field != "gripper" else -1e-6
                 if field not in curr_fields_dict.keys():
                     curr_fields_dict[field] = safe_default_value
+                    keyframe_has_been_edited = True
                 elif protobuf_zero_omission_check(curr_fields_dict[field]):
                     print(
                         f"\n\n Keyframe field: {field} with value {curr_fields_dict[field]} failed protobuf"
                         f" omission check. Setting to {safe_default_value}"
                     )
                     curr_fields_dict[field] = safe_default_value
+                    keyframe_has_been_edited = True
 
             ## Update actual keyframe with flattened keyframe
-            fixed_keyframe = joint_angle_keyframe_to_proto(curr_fields_dict)
-            self._animation.animation_keyframes[idx].CopyFrom(fixed_keyframe)
+            if keyframe_has_been_edited:
+                fixed_keyframe = joint_angle_keyframe_to_proto(curr_fields_dict)
+                self._animation.animation_keyframes[idx].CopyFrom(fixed_keyframe)
 
     def _update_timestamps_to_robot_precision(self) -> None:
         """Match the time precision on robot"""
