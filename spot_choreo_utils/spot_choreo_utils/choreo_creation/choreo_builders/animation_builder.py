@@ -586,20 +586,15 @@ class AnimationBuilder:
         so as to avoid errors thrown by BD's spot-sdk.
         """
 
-        print(f"\n\n flat keyframe 1 pre-fix: {flatten_keyframe_to_dictionary(self._animation.animation_keyframes[1])}")
-
         ## Loop 1: Collect all fields that are specified in >1 keyframe
         specified_fields: Set[str] = set()
         for keyframe in self._animation.animation_keyframes:
             is_protobuf = hasattr(keyframe, "ListFields")
-            print(f"is_protobuf: {is_protobuf}")
             if is_protobuf:
                 # Get a map of scalar field names to their values
                 curr_fields = flatten_keyframe_to_dictionary(keyframe).keys()
                 # And add any new fields found here
                 specified_fields |= set(curr_fields)
-
-        # print(f"\n specified_fields: {specified_fields}")
 
         ## Loop 2: Fill in all fields with non-zero values
         curr_fields_dict: Dict[str, float] = {}
@@ -608,33 +603,20 @@ class AnimationBuilder:
             if is_protobuf:
                 ## Fix the flattened keyframe
                 curr_fields_dict = flatten_keyframe_to_dictionary(keyframe)
-                # print(f"\n\n curr_fields_dict pre-fix: {curr_fields_dict}")
-
-                # print(f"\n now iterating over specified_fields: {specified_fields}")
                 for field in specified_fields:
-                    # print(f"\n field: {field}")
                     safe_default_value = 1e-6 if field != "gripper" else -1e-6
                     if field not in curr_fields_dict.keys():
-                        print(f"\n\nfield: {field} is not in curr_fields_dict.keys(): {curr_fields_dict.keys()}")
                         curr_fields_dict[field] = safe_default_value
                     elif protobuf_zero_omission_check(curr_fields_dict[field]):
                         print(
-                            f"\n\n field: {field} with value {curr_fields_dict[field]} failed omission check. setting"
-                            f" to {safe_default_value}"
+                            f"\n\n Keyframe field: {field} with value {curr_fields_dict[field]} failed protobuf"
+                            f" omission check. Setting to {safe_default_value}"
                         )
-                        # print(f"\n\n curr_fields_dict before fix: {curr_fields_dict}")
                         curr_fields_dict[field] = safe_default_value
-                        # print(f"\n\n curr_fields_dict after fix: {curr_fields_dict}")
 
                 ## Update actual keyframe with flattened keyframe
                 fixed_keyframe = joint_angle_keyframe_to_proto(curr_fields_dict)
                 self._animation.animation_keyframes[idx].CopyFrom(fixed_keyframe)
-                if idx == 1:
-                    print(f"\n\n keyframe {idx} post-fix: {keyframe}")
-
-        print(
-            f"\n\n flat keyframe 1 post-fix: {flatten_keyframe_to_dictionary(self._animation.animation_keyframes[1])}"
-        )
 
     def _update_timestamps_to_robot_precision(self) -> None:
         """Match the time precision on robot"""
@@ -650,7 +632,6 @@ def flatten_keyframe_to_dictionary(keyframe: AnimationKeyframe) -> dict[str, flo
     flattened_map = {}
 
     for joint_name, proto_path in keyframe_to_proto_attrs.items():
-        # print(f"joint_name: {joint_name}, proto_path: {proto_path}")
         active_proto = keyframe
         extraction_success = True
         for attribute in proto_path:
