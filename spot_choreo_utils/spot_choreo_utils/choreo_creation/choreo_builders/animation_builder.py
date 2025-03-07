@@ -642,7 +642,5 @@ def flatten_keyframe_to_dictionary(keyframe: AnimationKeyframe) -> dict[str, flo
                 break
         if extraction_success:
             flattened_map[joint_name] = active_proto
-        else:
-            flattened_map[joint_name] = 0
 
     return flattened_map
