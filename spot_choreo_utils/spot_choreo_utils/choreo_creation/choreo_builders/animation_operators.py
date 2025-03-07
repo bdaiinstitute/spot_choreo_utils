@@ -12,7 +12,6 @@ from spot_choreo_utils.choreo_creation.choreo_builders.animation_builder import 
 )
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import check_if_protobuf_field_set
 from spot_choreo_utils.choreo_creation.choreo_builders.sequence_builder import SequenceBuilder
-from spot_choreo_utils.choreo_creation.choreo_builders.spot_properties import joint_angle_to_protobuf_attrs_map
 
 
 def create_single_animation_sequence(
@@ -277,26 +276,3 @@ def resample_animation(
         )
         if new_keyframe:
             animation_builder.insert_keyframe_at_time(animation_keyframe=new_keyframe, start_time=current_time)
-
-
-def flatten_keyframe_to_dictionary(keyframe: AnimationKeyframe) -> dict[str, float]:
-    """
-    Recursively walks through the keyframe to extract all of the set values
-    """
-    keyframe_to_proto_attrs = joint_angle_to_protobuf_attrs_map()
-    flattened_map = {}
-
-    for animation_name, nested_proto_attrs in keyframe_to_proto_attrs.items():
-        active_proto = keyframe
-        extraction_success = True
-        for attribute in nested_proto_attrs:
-            if check_if_protobuf_field_set(active_proto, attribute):
-                active_proto = getattr(active_proto, attribute)
-            else:
-                extraction_success = False
-        if extraction_success:
-            flattened_map[animation_name] = active_proto
-        else:
-            flattened_map[animation_name] = 0
-
-    return flattened_map
