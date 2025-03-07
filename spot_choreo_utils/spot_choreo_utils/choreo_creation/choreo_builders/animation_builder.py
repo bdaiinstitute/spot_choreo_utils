@@ -639,6 +639,7 @@ def flatten_keyframe_to_dictionary(keyframe: AnimationKeyframe) -> dict[str, flo
                 active_proto = getattr(active_proto, attribute)
             else:
                 extraction_success = False
+                break
         if extraction_success:
             flattened_map[joint_name] = active_proto
         else:
