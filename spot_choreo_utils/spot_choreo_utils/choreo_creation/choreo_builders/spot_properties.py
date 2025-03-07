@@ -42,6 +42,9 @@ def joint_angle_to_protobuf_attrs_map() -> dict[str, List[str]]:
     attrs_map = {}
     joint_angle_names = protobuf_joint_angle_map()
 
+    # Time
+    attrs_map["time"] = ["time"]
+
     # Gripper
     attrs_map["gripper"] = ["gripper", "gripper_angle", "value"]
 
