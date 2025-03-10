@@ -6,7 +6,7 @@ import random
 import string
 from bisect import bisect_left
 from logging import Logger
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 from bosdyn.api.spot.choreography_sequence_pb2 import (
     AnimateArm,
@@ -20,9 +20,12 @@ from bosdyn.api.spot.choreography_sequence_pb2 import (
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import (
     build_gripper_params,
     check_if_keyframe_poses_equivalent,
+    check_if_protobuf_field_set,
     ensure_protobuf_compliance,
     joint_angle_keyframe_to_proto,
+    protobuf_zero_omission_check,
 )
+from spot_choreo_utils.choreo_creation.choreo_builders.spot_properties import joint_angle_to_protobuf_attrs_map
 
 
 class AnimationBuilder:
@@ -184,6 +187,14 @@ class AnimationBuilder:
         if build_settings.remove_duplicate_timestamps:
             self._remove_duplicate_timestamps()
 
+        self._fill_in_missing_fields()
+
+        if build_settings.only_output_valid:
+            res, msg = self.validate()
+            if not res:
+                self._logger.error(f"Failed to build animation: {msg}")
+                return None
+
         # Create new copy for procedural edits that would conflict with
         # future builder operations
         output_animation = copy.deepcopy(self._animation)
@@ -191,12 +202,6 @@ class AnimationBuilder:
         if build_settings.apply_stance_to_all_keyframes:
             for keyframe in output_animation.animation_keyframes:
                 self.add_stance_to_keyframe(keyframe)
-
-        if build_settings.only_output_valid:
-            res, msg = self.validate()
-            if not res:
-                self._logger.error(f"Failed to build animation: {msg}")
-                return None
 
         if build_settings.hold_final_pose_s:
             last_keyframe = self._animation.animation_keyframes[-1]
@@ -575,7 +580,67 @@ class AnimationBuilder:
         for dup_idx in reversed(duplicates):
             del self._animation.animation_keyframes[dup_idx : dup_idx + 1]
 
+    def _fill_in_missing_fields(self) -> None:
+        """
+        Ensures all keyframes contain the same set of joint_angles entries,
+        so as to avoid errors thrown by BD's spot-sdk.
+        """
+
+        ## Loop 1: Collect all fields that are specified in >1 keyframe
+        specified_fields: Set[str] = set()
+        for keyframe in self._animation.animation_keyframes:
+            # Get a map of scalar field names to their values
+            curr_fields = flatten_keyframe_to_dictionary(keyframe).keys()
+            # And add any new fields found here
+            specified_fields |= set(curr_fields)
+
+        ## Loop 2: Fill in all fields with non-zero values
+        curr_fields_dict: Dict[str, float] = {}
+        for idx, keyframe in enumerate(self._animation.animation_keyframes):
+            keyframe_has_been_edited = False
+            ## Fix the flattened keyframe
+            curr_fields_dict = flatten_keyframe_to_dictionary(keyframe)
+            for field in specified_fields:
+                safe_default_value = 1e-6 if field != "gripper" else -1e-6
+                if field not in curr_fields_dict.keys():
+                    curr_fields_dict[field] = safe_default_value
+                    keyframe_has_been_edited = True
+                elif protobuf_zero_omission_check(curr_fields_dict[field]):
+                    print(
+                        f"\n\n Keyframe field: {field} with value {curr_fields_dict[field]} failed protobuf"
+                        f" omission check. Setting to {safe_default_value}"
+                    )
+                    curr_fields_dict[field] = safe_default_value
+                    keyframe_has_been_edited = True
+
+            ## Update actual keyframe with flattened keyframe
+            if keyframe_has_been_edited:
+                fixed_keyframe = joint_angle_keyframe_to_proto(curr_fields_dict)
+                self._animation.animation_keyframes[idx].CopyFrom(fixed_keyframe)
+
     def _update_timestamps_to_robot_precision(self) -> None:
         """Match the time precision on robot"""
         for keyframe in self._animation.animation_keyframes:
             keyframe.time = float(f"{keyframe.time:.4f}")
+
+
+def flatten_keyframe_to_dictionary(keyframe: AnimationKeyframe) -> dict[str, float]:
+    """
+    Recursively walks through the keyframe to extract all of the set values
+    """
+    keyframe_to_proto_attrs = joint_angle_to_protobuf_attrs_map()
+    flattened_map = {}
+
+    for joint_name, proto_path in keyframe_to_proto_attrs.items():
+        active_proto = keyframe
+        extraction_success = True
+        for attribute in proto_path:
+            if check_if_protobuf_field_set(active_proto, attribute):
+                active_proto = getattr(active_proto, attribute)
+            else:
+                extraction_success = False
+                break
+        if extraction_success:
+            flattened_map[joint_name] = active_proto
+
+    return flattened_map

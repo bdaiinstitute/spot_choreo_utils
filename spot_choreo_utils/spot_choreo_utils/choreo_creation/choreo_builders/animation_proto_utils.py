@@ -281,6 +281,8 @@ def joint_angle_keyframe_to_proto(
     # Set the Keyframe time
     if "start_time" in keyframe_angles.keys():
         keyframe_proto.time = keyframe_angles["start_time"]
+    elif "time" in keyframe_angles.keys():
+        keyframe_proto.time = keyframe_angles["time"]
     elif start_time is not None:
         keyframe_proto.time = start_time
     else:
