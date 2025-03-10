@@ -16,7 +16,6 @@ from bosdyn.api.spot.choreography_sequence_pb2 import (
     Animation,
     AnimationKeyframe,
 )
-from google.protobuf.wrappers_pb2 import DoubleValue
 
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import (
     build_gripper_params,
