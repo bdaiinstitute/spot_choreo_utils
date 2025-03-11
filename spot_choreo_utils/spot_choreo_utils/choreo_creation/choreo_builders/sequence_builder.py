@@ -121,7 +121,7 @@ class SequenceBuilder:
         for move in moves_list:
             move_type = move.pop("type", None)
             move_adder = getattr(self, "add_" + move_type, None)
-            if move_adder:
+            if move_adder is not None:
                 move_adder(**move)
             else:
                 raise ValueError(f"Unsupported move type: {move_type}")
