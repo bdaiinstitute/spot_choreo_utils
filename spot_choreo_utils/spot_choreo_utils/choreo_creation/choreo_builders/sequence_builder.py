@@ -2,7 +2,7 @@
 
 import copy
 import logging
-from typing import Any, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from bosdyn.api.spot.choreography_params_pb2 import (
     AnimateParams,
@@ -91,6 +91,42 @@ class SequenceBuilder:
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
+
+    def add_moves(self, moves_list: List[Dict[str, Any]]) -> None:
+        """
+        Add a set of moves to the sequence
+
+        Args:
+            moves_list: list of per-move dictionaries, each containing the move type
+                and keyword args specific to that move type.
+                i.e.    moves_list = [
+                            {
+                                "type": "sway",
+                                "start_sec": 1.0,
+                                "duration_sec": 0.5,
+                                "horizontal": 0.161
+                            },
+                            {
+                                "type": "twerk",
+                                "start_sec": 0.0,
+                                "duration_sec": 0.5,
+                                "height": 0.1
+                            },
+                        ]
+
+        Returns:
+            None
+        """
+
+        for move in moves_list:
+            move_type = move.pop("type", None)
+            move_adder = getattr(self, "add_" + move_type, None)
+            if move_adder is not None:
+                move_adder(**move)
+            else:
+                raise ValueError(
+                    f"spot_choreo_utils' AnimationBuilder does not yet support adding moves of type: {move_type}"
+                )
 
     def add_rotate_body(
         self,
