@@ -124,7 +124,9 @@ class SequenceBuilder:
             if move_adder is not None:
                 move_adder(**move)
             else:
-                raise ValueError(f"Unsupported move type: {move_type}")
+                raise ValueError(
+                    f"spot_choreo_utils' AnimationBuilder does not yet support adding moves of type: {move_type}"
+                )
 
     def add_rotate_body(
         self,
