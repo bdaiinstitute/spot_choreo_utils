@@ -25,7 +25,7 @@ class SequenceBuilder:
 
     def __init__(self, logger: Optional[logging.Logger] = None) -> None:
         self._sequence = ChoreographySequence()
-        self._logger = logger
+        self._logger = logger if logger is not None else logging.Logger("Sequence Builder")
 
     def start_from_empty(self, name: str, slices_per_minute: int = 6000) -> None:
         """Build a sequence procedurally move by move"""
@@ -128,9 +128,6 @@ class SequenceBuilder:
                 raise ValueError(f"Unsupported move type: {move_type}")
 
     def validate_move(self, move_params: MoveParams) -> bool:
-        move_params.start_slice = max(move_params.start_slice, 0)
-        move_params.requested_slices = max(move_params.requested_slices, 0)
-
         if move_params.type == "animation":
             if self._logger is not None:
                 self._logger.warning("validation for animation moves not currently implemented. running anyway.")
@@ -145,30 +142,68 @@ class SequenceBuilder:
 
         return move_specific_validator(move_specific_params)
 
+    param_name_to_bounds = {
+        "start_slice": (0.0, float("inf")),
+        "requested_slices": (1.0, float("inf")),
+        "rotate_body_roll": (-0.5, 0.5),
+        "rotate_body_pitch": (-0.5, 0.5),
+        "rotate_body_yaw": (-0.5, 0.5),
+        "sway_vertical": (-0.2, 0.2),
+        "sway_horizontal": (-0.2, 0.2),
+        "sway_roll": (-0.2, 0.2),
+        "sway_pronounced": (0.0, 1.0),
+        "twerk_height": (0.0, 0.2),
+        "bourree_velocity_x": (-0.7, 0.7),
+        "bourree_velocity_y": (-0.5, 0.5),
+        "bourree_yaw_rate": (-0.7, 0.7),
+        "bourree_stance_length": (0.15, 0.8),
+    }
+
+    def _clamp_param(self, name: str, value_pb: DoubleValue) -> DoubleValue:
+        bounds = self.param_name_to_bounds[name]
+        val = value_pb.value
+        if val < bounds[0]:
+            if self._logger is not None:
+                self._logger.warning(
+                    f"Value {val} for param {name} it outside of bounds {bounds}. Clamping to lower bound: {bounds[0]}"
+                )
+            return DoubleValue(value=bounds[0])
+        elif val > bounds[1]:
+            if self._logger is not None:
+                self._logger.warning(
+                    f"Value {val} for param {name} it outside of bounds {bounds}. Clamping to upper bound: {bounds[1]}"
+                )
+            return DoubleValue(value=bounds[1])
+        else:
+            return DoubleValue(value=val)
+
     def validate_rotate_body(self, params: RotateBodyParams) -> bool:
-        params.roll.CopyFrom(DoubleValue(value=max(min(params.roll.value, 0.5), -0.5)))
-        params.pitch.CopyFrom(DoubleValue(value=max(min(params.pitch.value, 0.5), -0.5)))
-        params.yaw.CopyFrom(DoubleValue(value=max(min(params.yaw.value, 0.5), -0.5)))
+        params.start_slice.CopyFrom(self._clamp_param("start_slice", params.start_slice))
+        params.requested_slices.CopyFrom(self._clamp_param("requested_slices", params.requested_slices))
+        params.roll.CopyFrom(self._clamp_param("rotate_body_roll", params.roll))
+        params.pitch.CopyFrom(self._clamp_param("rotate_body_pitch", params.pitch))
+        params.yaw.CopyFrom(self._clamp_param("rotate_body_yaw", params.yaw))
         return True
 
     def validate_sway(self, params: SwayParams) -> bool:
-        params.vertical.CopyFrom(DoubleValue(value=max(min(params.roll.value, 0.2), -0.2)))
-        params.horizontal.CopyFrom(DoubleValue(value=max(min(params.horizontal.value, 0.4), -0.4)))
-        params.roll.CopyFrom(DoubleValue(value=max(min(params.roll.value, 0.2), -0.2)))
-        params.style = max(min(params.style, 6), 0)
+        params.vertical.CopyFrom(self._clamp_param("sway_vertical", params.vertical))
+        params.horizontal.CopyFrom(self._clamp_param("sway_horizontal", params.horizontal))
+        params.roll.CopyFrom(self._clamp_param("sway_roll", params.roll))
+        if params.style not in SwayParams.SwayStyle.values():
+            params.style = SwayParams.SWAY_STYLE_STANDARD
         if params.style > 1:
-            params.pronounced.CopyFrom(DoubleValue(value=max(min(params.pronounced.value, 1.0), 0.0)))
+            params.pronounced.CopyFrom(self._clamp_param("sway_pronounced", params.pronounced))
         return True
 
     def validate_twerk(self, params: TwerkParams) -> bool:
-        params.height.CopyFrom(DoubleValue(value=max(min(params.height.value, 0.2), 0.0)))
+        params.height.CopyFrom(self._clamp_param("twerk_height", params.height))
         return True
 
     def validate_bourree(self, params: BourreeParams) -> bool:
-        params.velocity_x.CopyFrom(DoubleValue(value=max(min(params.velocity_x.value, 0.7), -0.7)))
-        params.velocity_y.CopyFrom(DoubleValue(value=max(min(params.velocity_y.value, 0.5), -0.5)))
-        params.yaw_rate.CopyFrom(DoubleValue(value=max(min(params.yaw_rate.value, 0.7), -0.7)))
-        params.stance_length.CopyFrom(DoubleValue(value=max(min(params.stance_length.value, 0.8), 0.15)))
+        params.velocity_x.CopyFrom(self._clamp_param("bourree_velocity_x", params.velocity_x))
+        params.velocity_y.CopyFrom(self._clamp_param("bourree_velocity_y", params.velocity_y))
+        params.yaw_rate.CopyFrom(self._clamp_param("bourree_yaw_rate", params.yaw_rate))
+        params.stance_length.CopyFrom(self._clamp_param("bourree_stance_length", params.stance_length))
         return True
 
     def add_rotate_body(
