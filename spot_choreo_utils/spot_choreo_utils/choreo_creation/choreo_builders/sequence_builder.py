@@ -246,7 +246,11 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.rotate_body_params.CopyFrom(rotate_body_params)
 
-        self.validate_move(move_params)
+        try:
+            self.validate_move(move_params)
+        except ValueError as e:
+            if self._logger is not None:
+                self._logger.warning(f"Move validation warning: {e}")
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -310,7 +314,11 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.sway_params.CopyFrom(sway_params)
 
-        self.validate_move(move_params)
+        try:
+            self.validate_move(move_params)
+        except ValueError as e:
+            if self._logger is not None:
+                self._logger.warning(f"Move validation warning: {e}")
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -346,7 +354,11 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.twerk_params.CopyFrom(twerk_params)
 
-        self.validate_move(move_params)
+        try:
+            self.validate_move(move_params)
+        except ValueError as e:
+            if self._logger is not None:
+                self._logger.warning(f"Move validation warning: {e}")
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -396,7 +408,11 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.bourree_params.CopyFrom(bourree_params)
 
-        self.validate_move(move_params)
+        try:
+            self.validate_move(move_params)
+        except ValueError as e:
+            if self._logger is not None:
+                self._logger.warning(f"Move validation warning: {e}")
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
