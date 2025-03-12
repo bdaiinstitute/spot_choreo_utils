@@ -6,7 +6,7 @@ import random
 import string
 from bisect import bisect_left
 from logging import Logger
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 from bosdyn.api.spot.choreography_sequence_pb2 import (
     AnimateArm,
@@ -24,7 +24,9 @@ from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils imp
     check_if_protobuf_field_set,
     ensure_protobuf_compliance,
     joint_angle_keyframe_to_proto,
+    protobuf_zero_omission_check,
 )
+from spot_choreo_utils.choreo_creation.choreo_builders.spot_properties import joint_angle_to_protobuf_attrs_map
 
 
 class AnimationBuilder:
@@ -585,32 +587,61 @@ class AnimationBuilder:
         so as to avoid errors thrown by BD's spot-sdk.
         """
 
-        ## Loop 1: Collect set of all joint_angles fields that are specified in at least one keyframe
-        specified_fields = set()
+        ## Loop 1: Collect all fields that are specified in >1 keyframe
+        specified_fields: Set[str] = set()
         for keyframe in self._animation.animation_keyframes:
-            is_protobuf = hasattr(keyframe, "ListFields")
-            if is_protobuf:
-                if check_if_protobuf_field_set(keyframe, "arm"):
-                    arm = getattr(keyframe, "arm")
-                    if check_if_protobuf_field_set(arm, "joint_angles"):
-                        joint_angles = getattr(arm, "joint_angles")
-                        curr_fields = {field.name for field, _ in joint_angles.ListFields()}
-                        specified_fields |= curr_fields  # union
+            # Get a map of scalar field names to their values
+            curr_fields = flatten_keyframe_to_dictionary(keyframe).keys()
+            # And add any new fields found here
+            specified_fields |= set(curr_fields)
 
-        ## Loop 2: For each keyframe, fill in missing joint_angle fields with near-zero value
-        for keyframe in self._animation.animation_keyframes:
-            is_protobuf = hasattr(keyframe, "ListFields")
-            if is_protobuf:
-                if check_if_protobuf_field_set(keyframe, "arm"):
-                    arm = getattr(keyframe, "arm")
-                    if check_if_protobuf_field_set(arm, "joint_angles"):
-                        joint_angles = getattr(arm, "joint_angles")
-                        curr_fields = {field.name for field, _ in joint_angles.ListFields()}
-                        missing_fields = specified_fields - curr_fields
-                        for field in missing_fields:
-                            getattr(joint_angles, field).CopyFrom(DoubleValue(value=1e-06))
+        ## Loop 2: Fill in all fields with non-zero values
+        curr_fields_dict: Dict[str, float] = {}
+        for idx, keyframe in enumerate(self._animation.animation_keyframes):
+            keyframe_has_been_edited = False
+            ## Fix the flattened keyframe
+            curr_fields_dict = flatten_keyframe_to_dictionary(keyframe)
+            for field in specified_fields:
+                safe_default_value = 1e-6 if field != "gripper" else -1e-6
+                if field not in curr_fields_dict.keys():
+                    curr_fields_dict[field] = safe_default_value
+                    keyframe_has_been_edited = True
+                elif protobuf_zero_omission_check(curr_fields_dict[field]):
+                    print(
+                        f"\n\n Keyframe field: {field} with value {curr_fields_dict[field]} failed protobuf"
+                        f" omission check. Setting to {safe_default_value}"
+                    )
+                    curr_fields_dict[field] = safe_default_value
+                    keyframe_has_been_edited = True
+
+            ## Update actual keyframe with flattened keyframe
+            if keyframe_has_been_edited:
+                fixed_keyframe = joint_angle_keyframe_to_proto(curr_fields_dict)
+                self._animation.animation_keyframes[idx].CopyFrom(fixed_keyframe)
 
     def _update_timestamps_to_robot_precision(self) -> None:
         """Match the time precision on robot"""
         for keyframe in self._animation.animation_keyframes:
             keyframe.time = float(f"{keyframe.time:.4f}")
+
+
+def flatten_keyframe_to_dictionary(keyframe: AnimationKeyframe) -> dict[str, float]:
+    """
+    Recursively walks through the keyframe to extract all of the set values
+    """
+    keyframe_to_proto_attrs = joint_angle_to_protobuf_attrs_map()
+    flattened_map = {}
+
+    for joint_name, proto_path in keyframe_to_proto_attrs.items():
+        active_proto = keyframe
+        extraction_success = True
+        for attribute in proto_path:
+            if check_if_protobuf_field_set(active_proto, attribute):
+                active_proto = getattr(active_proto, attribute)
+            else:
+                extraction_success = False
+                break
+        if extraction_success:
+            flattened_map[joint_name] = active_proto
+
+    return flattened_map
