@@ -128,11 +128,6 @@ class SequenceBuilder:
                 raise ValueError(f"Unsupported move type: {move_type}")
 
     def validate_move(self, move_params: MoveParams) -> bool:
-        if move_params.type == "animation":
-            if self._logger is not None:
-                self._logger.warning("validation for animation moves not currently implemented. running anyway.")
-            return True
-
         move_specific_validator = getattr(self, "validate_" + move_params.type, None)
         if move_specific_validator is None:
             raise ValueError(f"move validator not found for: {move_params.type}")
