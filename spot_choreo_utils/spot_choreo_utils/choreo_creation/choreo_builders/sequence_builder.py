@@ -442,5 +442,8 @@ class SequenceBuilder:
                         f" is {min_slices}-{max_slices}"
                     ),
                 )
-            self.validate_move(move)
+            try:
+                self.validate_move(move)
+            except ValueError as e:
+                return False, str(e)
         return True, "success"
