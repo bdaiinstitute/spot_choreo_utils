@@ -170,7 +170,7 @@ class SequenceBuilder:
                 )
             return DoubleValue(value=bounds[1])
         else:
-            return DoubleValue(value=val)
+            return value_pb
 
     def validate_rotate_body(self, params: RotateBodyParams) -> bool:
         params.start_slice.CopyFrom(self._clamp_param("start_slice", params.start_slice))
