@@ -25,7 +25,7 @@ class SequenceBuilder:
 
     def __init__(self, logger: Optional[logging.Logger] = None) -> None:
         self._sequence = ChoreographySequence()
-        self._logger = logger if logger is not None else logging.Logger("Sequence Builder")
+        self._logger = logger
 
     def start_from_empty(self, name: str, slices_per_minute: int = 6000) -> None:
         """Build a sequence procedurally move by move"""
