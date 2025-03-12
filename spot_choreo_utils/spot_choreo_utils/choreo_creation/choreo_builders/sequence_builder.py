@@ -19,6 +19,23 @@ from bosdyn.api.spot.choreography_sequence_pb2 import (
 )
 from google.protobuf.wrappers_pb2 import DoubleValue
 
+PARAM_NAME_TO_BOUNDS = {
+    "start_slice": (0.0, float("inf")),
+    "requested_slices": (1.0, float("inf")),
+    "rotate_body_roll": (-0.5, 0.5),
+    "rotate_body_pitch": (-0.5, 0.5),
+    "rotate_body_yaw": (-0.5, 0.5),
+    "sway_vertical": (-0.2, 0.2),
+    "sway_horizontal": (-0.2, 0.2),
+    "sway_roll": (-0.2, 0.2),
+    "sway_pronounced": (0.0, 1.0),
+    "twerk_height": (0.0, 0.2),
+    "bourree_velocity_x": (-0.7, 0.7),
+    "bourree_velocity_y": (-0.5, 0.5),
+    "bourree_yaw_rate": (-0.7, 0.7),
+    "bourree_stance_length": (0.15, 0.8),
+}
+
 
 class SequenceBuilder:
     """Convenient wrapper for building, editing, and validating choreography sequences"""
@@ -137,25 +154,8 @@ class SequenceBuilder:
 
         return move_specific_validator(move_specific_params)
 
-    param_name_to_bounds = {
-        "start_slice": (0.0, float("inf")),
-        "requested_slices": (1.0, float("inf")),
-        "rotate_body_roll": (-0.5, 0.5),
-        "rotate_body_pitch": (-0.5, 0.5),
-        "rotate_body_yaw": (-0.5, 0.5),
-        "sway_vertical": (-0.2, 0.2),
-        "sway_horizontal": (-0.2, 0.2),
-        "sway_roll": (-0.2, 0.2),
-        "sway_pronounced": (0.0, 1.0),
-        "twerk_height": (0.0, 0.2),
-        "bourree_velocity_x": (-0.7, 0.7),
-        "bourree_velocity_y": (-0.5, 0.5),
-        "bourree_yaw_rate": (-0.7, 0.7),
-        "bourree_stance_length": (0.15, 0.8),
-    }
-
     def _clamp_param(self, name: str, value_pb: DoubleValue) -> DoubleValue:
-        bounds = self.param_name_to_bounds[name]
+        bounds = PARAM_NAME_TO_BOUNDS[name]
         val = value_pb.value
         if val < bounds[0]:
             if self._logger is not None:
