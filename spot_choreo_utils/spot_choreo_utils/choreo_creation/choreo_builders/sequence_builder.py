@@ -147,10 +147,11 @@ class SequenceBuilder:
     def validate_move(self, move_params: MoveParams) -> Tuple[bool, str]:
         move_specific_validator = getattr(self, "validate_" + move_params.type, None)
         if move_specific_validator is None:
-            raise ValueError(f"move validator not found for: {move_params.type}")
+            return False, f"Move validator not found for move of type {move_params.type}"
+
         move_specific_params = getattr(move_params, move_params.type + "_params", None)
         if move_specific_params is None:
-            raise ValueError(f"Move of type {move_params.type} does not contain a {move_params.type}_params member")
+            return False, f"Move of type {move_params.type} does not contain a {move_params.type}_params member"
 
         return move_specific_validator(move_specific_params)
 
@@ -452,14 +453,14 @@ class SequenceBuilder:
 
     def validate(self) -> Tuple[bool, str]:
         """Offline validator that matches reasons sequences fail to exceute on robot"""
-
         if not self._sequence.name:
             return False, "Sequence has no name"
+
         if not self._sequence.slices_per_minute:
             return False, "Must specify slices per minute"
 
         if not self._sequence.moves:
-            return False, "Sequence must contain at least 1 moves"
+            return False, "Sequence must contain at least 1 move"
 
         for idx, move in enumerate(self._sequence.moves):
             if move.start_slice < 0:
@@ -474,13 +475,8 @@ class SequenceBuilder:
                         f" is {min_slices}-{max_slices}"
                     ),
                 )
-            try:
-                res, msg = self.validate_move(move)
-                if not res:
-                    return False, f"Move validation failed: {msg}"
-            except ValueError as e:
-                err_msg = f"Cannot validate move. Move validation exception: {e}"
-                if self._logger is not None:
-                    self._logger.warning(err_msg)
-                return False, err_msg
+            res, msg = self.validate_move(move)
+            if not res:
+                return False, f"Move failed to validate: {msg}"
+
         return True, "success"
