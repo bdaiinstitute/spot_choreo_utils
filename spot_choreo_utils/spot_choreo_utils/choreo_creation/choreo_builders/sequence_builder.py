@@ -144,7 +144,7 @@ class SequenceBuilder:
             else:
                 raise ValueError(f"Unsupported move type: {move_type}")
 
-    def validate_move(self, move_params: MoveParams) -> bool:
+    def validate_move(self, move_params: MoveParams) -> Tuple[bool, str]:
         move_specific_validator = getattr(self, "validate_" + move_params.type, None)
         if move_specific_validator is None:
             raise ValueError(f"move validator not found for: {move_params.type}")
@@ -168,15 +168,15 @@ class SequenceBuilder:
             self._logger.warning(warn_str)
         return value_pb
 
-    def validate_rotate_body(self, params: RotateBodyParams) -> bool:
+    def validate_rotate_body(self, params: RotateBodyParams) -> Tuple[bool, str]:
         params.start_slice.CopyFrom(self._clamp_param("start_slice", params.start_slice))
         params.requested_slices.CopyFrom(self._clamp_param("requested_slices", params.requested_slices))
         params.roll.CopyFrom(self._clamp_param("rotate_body_roll", params.roll))
         params.pitch.CopyFrom(self._clamp_param("rotate_body_pitch", params.pitch))
         params.yaw.CopyFrom(self._clamp_param("rotate_body_yaw", params.yaw))
-        return True
+        return True, "Success"
 
-    def validate_sway(self, params: SwayParams) -> bool:
+    def validate_sway(self, params: SwayParams) -> Tuple[bool, str]:
         params.vertical.CopyFrom(self._clamp_param("sway_vertical", params.vertical))
         params.horizontal.CopyFrom(self._clamp_param("sway_horizontal", params.horizontal))
         params.roll.CopyFrom(self._clamp_param("sway_roll", params.roll))
@@ -184,18 +184,18 @@ class SequenceBuilder:
             params.style = SwayParams.SWAY_STYLE_STANDARD
         if params.style > 1:
             params.pronounced.CopyFrom(self._clamp_param("sway_pronounced", params.pronounced))
-        return True
+        return True, "Success"
 
-    def validate_twerk(self, params: TwerkParams) -> bool:
+    def validate_twerk(self, params: TwerkParams) -> Tuple[bool, str]:
         params.height.CopyFrom(self._clamp_param("twerk_height", params.height))
-        return True
+        return True, "Success"
 
-    def validate_bourree(self, params: BourreeParams) -> bool:
+    def validate_bourree(self, params: BourreeParams) -> Tuple[bool, str]:
         params.velocity_x.CopyFrom(self._clamp_param("bourree_velocity_x", params.velocity_x))
         params.velocity_y.CopyFrom(self._clamp_param("bourree_velocity_y", params.velocity_y))
         params.yaw_rate.CopyFrom(self._clamp_param("bourree_yaw_rate", params.yaw_rate))
         params.stance_length.CopyFrom(self._clamp_param("bourree_stance_length", params.stance_length))
-        return True
+        return True, "Success"
 
     def add_rotate_body(
         self,
@@ -243,10 +243,15 @@ class SequenceBuilder:
         move_params.rotate_body_params.CopyFrom(rotate_body_params)
 
         try:
-            self.validate_move(move_params)
+            res, msg = self.validate_move(move_params)
+            if not res:
+                if self._logger is not None:
+                    self._logger.warning(f"Failed to validate move: {msg}")
+                return
         except ValueError as e:
             if self._logger is not None:
-                self._logger.warning(f"Move validation warning: {e}")
+                self._logger.warning(f"Cannot add move to sequence. Move validation exception: {e}")
+            return
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -311,10 +316,15 @@ class SequenceBuilder:
         move_params.sway_params.CopyFrom(sway_params)
 
         try:
-            self.validate_move(move_params)
+            res, msg = self.validate_move(move_params)
+            if not res:
+                if self._logger is not None:
+                    self._logger.warning(f"Failed to validate move: {msg}")
+                return
         except ValueError as e:
             if self._logger is not None:
-                self._logger.warning(f"Move validation warning: {e}")
+                self._logger.warning(f"Cannot add move to sequence. Move validation exception: {e}")
+            return
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -351,10 +361,15 @@ class SequenceBuilder:
         move_params.twerk_params.CopyFrom(twerk_params)
 
         try:
-            self.validate_move(move_params)
+            res, msg = self.validate_move(move_params)
+            if not res:
+                if self._logger is not None:
+                    self._logger.warning(f"Failed to validate move: {msg}")
+                return
         except ValueError as e:
             if self._logger is not None:
-                self._logger.warning(f"Move validation warning: {e}")
+                self._logger.warning(f"Cannot add move to sequence. Move validation exception: {e}")
+            return
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -405,10 +420,15 @@ class SequenceBuilder:
         move_params.bourree_params.CopyFrom(bourree_params)
 
         try:
-            self.validate_move(move_params)
+            res, msg = self.validate_move(move_params)
+            if not res:
+                if self._logger is not None:
+                    self._logger.warning(f"Failed to validate move: {msg}")
+                return
         except ValueError as e:
             if self._logger is not None:
-                self._logger.warning(f"Move validation warning: {e}")
+                self._logger.warning(f"Cannot add move to sequence. Move validation exception: {e}")
+            return
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
@@ -455,7 +475,12 @@ class SequenceBuilder:
                     ),
                 )
             try:
-                self.validate_move(move)
+                res, msg = self.validate_move(move)
+                if not res:
+                    return False, f"Move validation failed: {msg}"
             except ValueError as e:
-                return False, str(e)
+                err_msg = f"Cannot validate move. Move validation exception: {e}"
+                if self._logger is not None:
+                    self._logger.warning(err_msg)
+                return False, err_msg
         return True, "success"
