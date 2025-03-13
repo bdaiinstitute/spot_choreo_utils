@@ -155,22 +155,18 @@ class SequenceBuilder:
         return move_specific_validator(move_specific_params)
 
     def _clamp_param(self, name: str, value_pb: DoubleValue) -> DoubleValue:
-        bounds = PARAM_NAME_TO_BOUNDS[name]
-        val = value_pb.value
-        if val < bounds[0]:
-            if self._logger is not None:
-                self._logger.warning(
-                    f"Value {val} for param {name} it outside of bounds {bounds}. Clamping to lower bound: {bounds[0]}"
-                )
-            return DoubleValue(value=bounds[0])
-        elif val > bounds[1]:
-            if self._logger is not None:
-                self._logger.warning(
-                    f"Value {val} for param {name} it outside of bounds {bounds}. Clamping to upper bound: {bounds[1]}"
-                )
-            return DoubleValue(value=bounds[1])
-        else:
-            return value_pb
+        low_bound, high_bound = PARAM_NAME_TO_BOUNDS[name]
+        warn_str = None
+        if value_pb.value < low_bound:
+            warn_str = f"Value {value_pb.value} for param {name} has been clamped to lower bound {low_bound}."
+            value_pb = DoubleValue(value=low_bound)
+        elif value_pb.value > high_bound:
+            warn_str = f"Value {value_pb.value} for param {name} has been clamped to upper bound {high_bound}."
+            value_pb = DoubleValue(value=high_bound)
+
+        if warn_str is not None and self._logger is not None:
+            self._logger.warning(warn_str)
+        return value_pb
 
     def validate_rotate_body(self, params: RotateBodyParams) -> bool:
         params.start_slice.CopyFrom(self._clamp_param("start_slice", params.start_slice))
