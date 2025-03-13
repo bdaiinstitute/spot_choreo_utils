@@ -246,7 +246,7 @@ class SequenceBuilder:
             res, msg = self.validate_move(move_params)
             if not res:
                 if self._logger is not None:
-                    self._logger.warning(f"Failed to validate move: {msg}")
+                    self._logger.warning(f"Failed to validate move: {msg}. Not adding this move to sequence.")
                 return
         except ValueError as e:
             if self._logger is not None:
@@ -319,7 +319,7 @@ class SequenceBuilder:
             res, msg = self.validate_move(move_params)
             if not res:
                 if self._logger is not None:
-                    self._logger.warning(f"Failed to validate move: {msg}")
+                    self._logger.warning(f"Failed to validate move: {msg}. Not adding this move to sequence.")
                 return
         except ValueError as e:
             if self._logger is not None:
@@ -364,7 +364,7 @@ class SequenceBuilder:
             res, msg = self.validate_move(move_params)
             if not res:
                 if self._logger is not None:
-                    self._logger.warning(f"Failed to validate move: {msg}")
+                    self._logger.warning(f"Failed to validate move: {msg}. Not adding this move to sequence.")
                 return
         except ValueError as e:
             if self._logger is not None:
@@ -423,7 +423,7 @@ class SequenceBuilder:
             res, msg = self.validate_move(move_params)
             if not res:
                 if self._logger is not None:
-                    self._logger.warning(f"Failed to validate move: {msg}")
+                    self._logger.warning(f"Failed to validate move: {msg}. Not adding this move to sequence.")
                 return
         except ValueError as e:
             if self._logger is not None:
