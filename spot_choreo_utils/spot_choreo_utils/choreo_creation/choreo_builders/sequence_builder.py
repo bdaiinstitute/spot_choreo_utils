@@ -146,12 +146,16 @@ class SequenceBuilder:
 
     def validate_move(self, move_params: MoveParams) -> Tuple[bool, str]:
         move_specific_validator = getattr(self, "validate_" + move_params.type, None)
-        if move_specific_validator is None:
-            return False, f"Move validator not found for move of type {move_params.type}"
-
         move_specific_params = getattr(move_params, move_params.type + "_params", None)
-        if move_specific_params is None:
-            return False, f"Move of type {move_params.type} does not contain a {move_params.type}_params member"
+
+        if move_specific_validator is None or move_specific_params is None:
+            return (
+                False,
+                (
+                    f"Move of type {move_params.type} either lacks a validator function, or is provided without a"
+                    f" {move_params.type}_params member"
+                ),
+            )
 
         return move_specific_validator(move_specific_params)
 
