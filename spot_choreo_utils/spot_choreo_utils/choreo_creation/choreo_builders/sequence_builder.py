@@ -17,6 +17,24 @@ from bosdyn.api.spot.choreography_sequence_pb2 import (
     ChoreographySequence,
     MoveParams,
 )
+from google.protobuf.wrappers_pb2 import DoubleValue
+
+PARAM_NAME_TO_BOUNDS = {
+    "start_slice": (0.0, float("inf")),
+    "requested_slices": (1.0, float("inf")),
+    "rotate_body_roll": (-0.5, 0.5),
+    "rotate_body_pitch": (-0.5, 0.5),
+    "rotate_body_yaw": (-0.5, 0.5),
+    "sway_vertical": (-0.2, 0.2),
+    "sway_horizontal": (-0.2, 0.2),
+    "sway_roll": (-0.2, 0.2),
+    "sway_pronounced": (0.0, 1.0),
+    "twerk_height": (0.0, 0.2),
+    "bourree_velocity_x": (-0.7, 0.7),
+    "bourree_velocity_y": (-0.5, 0.5),
+    "bourree_yaw_rate": (-0.7, 0.7),
+    "bourree_stance_length": (0.15, 0.8),
+}
 
 
 class SequenceBuilder:
@@ -124,9 +142,65 @@ class SequenceBuilder:
             if move_adder is not None:
                 move_adder(**move)
             else:
-                raise ValueError(
-                    f"spot_choreo_utils' AnimationBuilder does not yet support adding moves of type: {move_type}"
-                )
+                raise ValueError(f"Unsupported move type: {move_type}")
+
+    def validate_move(self, move_params: MoveParams) -> Tuple[bool, str]:
+        move_specific_validator = getattr(self, "validate_" + move_params.type, None)
+        move_specific_params = getattr(move_params, move_params.type + "_params", None)
+
+        if move_specific_validator is None or move_specific_params is None:
+            return (
+                False,
+                (
+                    f"Move of type {move_params.type} either lacks a validator function, or is provided without a"
+                    f" {move_params.type}_params member"
+                ),
+            )
+
+        return move_specific_validator(move_specific_params)
+
+    def _clamp_param(self, name: str, value_pb: DoubleValue) -> DoubleValue:
+        low_bound, high_bound = PARAM_NAME_TO_BOUNDS[name]
+        warn_str = None
+        if value_pb.value < low_bound:
+            warn_str = f"Value {value_pb.value} for param {name} has been clamped to lower bound {low_bound}."
+            value_pb = DoubleValue(value=low_bound)
+        elif value_pb.value > high_bound:
+            warn_str = f"Value {value_pb.value} for param {name} has been clamped to upper bound {high_bound}."
+            value_pb = DoubleValue(value=high_bound)
+
+        if warn_str is not None and self._logger is not None:
+            self._logger.warning(warn_str)
+        return value_pb
+
+    def validate_rotate_body(self, params: RotateBodyParams) -> Tuple[bool, str]:
+        params.start_slice.CopyFrom(self._clamp_param("start_slice", params.start_slice))
+        params.requested_slices.CopyFrom(self._clamp_param("requested_slices", params.requested_slices))
+        params.roll.CopyFrom(self._clamp_param("rotate_body_roll", params.roll))
+        params.pitch.CopyFrom(self._clamp_param("rotate_body_pitch", params.pitch))
+        params.yaw.CopyFrom(self._clamp_param("rotate_body_yaw", params.yaw))
+        return True, "Success"
+
+    def validate_sway(self, params: SwayParams) -> Tuple[bool, str]:
+        params.vertical.CopyFrom(self._clamp_param("sway_vertical", params.vertical))
+        params.horizontal.CopyFrom(self._clamp_param("sway_horizontal", params.horizontal))
+        params.roll.CopyFrom(self._clamp_param("sway_roll", params.roll))
+        if params.style not in SwayParams.SwayStyle.values():
+            params.style = SwayParams.SWAY_STYLE_STANDARD
+        if params.style > 1:
+            params.pronounced.CopyFrom(self._clamp_param("sway_pronounced", params.pronounced))
+        return True, "Success"
+
+    def validate_twerk(self, params: TwerkParams) -> Tuple[bool, str]:
+        params.height.CopyFrom(self._clamp_param("twerk_height", params.height))
+        return True, "Success"
+
+    def validate_bourree(self, params: BourreeParams) -> Tuple[bool, str]:
+        params.velocity_x.CopyFrom(self._clamp_param("bourree_velocity_x", params.velocity_x))
+        params.velocity_y.CopyFrom(self._clamp_param("bourree_velocity_y", params.velocity_y))
+        params.yaw_rate.CopyFrom(self._clamp_param("bourree_yaw_rate", params.yaw_rate))
+        params.stance_length.CopyFrom(self._clamp_param("bourree_stance_length", params.stance_length))
+        return True, "Success"
 
     def add_rotate_body(
         self,
@@ -136,7 +210,7 @@ class SequenceBuilder:
         pitch: float = 0.05,
         yaw: float = 0.00,
         return_to_start_pose: bool = True,
-    ) -> None:
+    ) -> Tuple[bool, str]:
         """
         Add a rotate_body to the sequence
 
@@ -159,13 +233,6 @@ class SequenceBuilder:
         # Calculate the slices to request based on duration
         requested_slices = max(int(duration_sec * slices_per_second), 1)
 
-        # Sanitize inputs
-        start_sec = max(start_sec, 0)
-        duration_sec = max(start_sec, 0)
-        roll = max(min(roll, 0.5), -0.5)
-        pitch = max(min(pitch, 0.5), -0.5)
-        yaw = max(min(yaw, 0.5), -0.5)
-
         # Construct the move-specific parameters
         rotate_body_params = RotateBodyParams()
         rotate_body_params.EulerZYXValue.roll.value = roll
@@ -180,8 +247,16 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.rotate_body_params.CopyFrom(rotate_body_params)
 
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
+            if self._logger is not None:
+                self._logger.warning(fail_str)
+            return False, fail_str
+
         # Add to the sequence
         self._sequence.moves.append(move_params)
+        return True, "success"
 
     def add_sway(
         self,
@@ -194,7 +269,7 @@ class SequenceBuilder:
         style: Any = SwayParams.SwayStyle.SWAY_STYLE_STANDARD,
         pronounced: float = 0.5,
         hold_zero_axes: bool = False,
-    ) -> None:
+    ) -> Tuple[bool, str]:
         """
         Add a sway to the sequence
 
@@ -225,14 +300,6 @@ class SequenceBuilder:
         # Calculate the slices to request based on duration
         requested_slices = max(int(duration_sec * slices_per_second), 1)
 
-        # Sanitize inputs
-        start_sec = max(start_sec, 0)
-        duration_sec = max(start_sec, 0)
-        vertical = max(min(roll, 0.2), -0.2)
-        horizontal = max(min(horizontal, 0.4), -0.4)
-        roll = max(min(roll, 0.2), -0.2)
-        pronounced = max(min(pronounced, 1.0), 0.0)
-
         # Construct the move-specific parameters
         sway_params = SwayParams()
         sway_params.vertical.value = vertical
@@ -250,10 +317,18 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.sway_params.CopyFrom(sway_params)
 
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
+            if self._logger is not None:
+                self._logger.warning(fail_str)
+            return False, fail_str
+
         # Add to the sequence
         self._sequence.moves.append(move_params)
+        return True, "success"
 
-    def add_twerk(self, start_sec: float, duration_sec: float, height: float = 0.05) -> None:
+    def add_twerk(self, start_sec: float, duration_sec: float, height: float = 0.05) -> Tuple[bool, str]:
         """
         Add a twerk to the sequence
 
@@ -273,11 +348,6 @@ class SequenceBuilder:
         # Calculate the slices to request based on duration
         requested_slices = max(int(duration_sec * slices_per_second), 1)
 
-        # Sanitize inputs
-        start_sec = max(start_sec, 0)
-        duration_sec = max(start_sec, 0)
-        height = max(min(height, 0.2), 0.0)
-
         # Construct the move-specific parameters
         twerk_params = TwerkParams()
         twerk_params.height.value = height
@@ -289,8 +359,16 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.twerk_params.CopyFrom(twerk_params)
 
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
+            if self._logger is not None:
+                self._logger.warning(fail_str)
+            return False, fail_str
+
         # Add to the sequence
         self._sequence.moves.append(move_params)
+        return True, "success"
 
     def add_bourree(
         self,
@@ -300,7 +378,7 @@ class SequenceBuilder:
         velocity_y: float = 0.00,
         yaw_rate: float = 0.05,
         stance_length: float = 0.00,
-    ) -> None:
+    ) -> Tuple[bool, str]:
         """
         Add a bourree to the sequence
 
@@ -323,14 +401,6 @@ class SequenceBuilder:
         # Calculate the slices to request based on duration
         requested_slices = max(int(duration_sec * slices_per_second), 1)
 
-        # Sanitize inputs
-        start_sec = max(start_sec, 0)
-        duration_sec = max(start_sec, 0)
-        velocity_x = max(min(velocity_x, 0.7), -0.7)
-        velocity_y = max(min(velocity_y, 0.5), -0.5)
-        yaw_rate = max(min(yaw_rate, 0.7), -0.7)
-        stance_length = max(min(stance_length, 0.8), 0.15)
-
         # Construct the move-specific parameters
         bourree_params = BourreeParams()
         bourree_params.velocity.x.value = velocity_x
@@ -345,8 +415,16 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.bourree_params.CopyFrom(bourree_params)
 
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
+            if self._logger is not None:
+                self._logger.warning(fail_str)
+            return False, fail_str
+
         # Add to the sequence
         self._sequence.moves.append(move_params)
+        return True, "success"
 
     def build(self) -> ChoreographySequence:
         """
@@ -367,14 +445,14 @@ class SequenceBuilder:
 
     def validate(self) -> Tuple[bool, str]:
         """Offline validator that matches reasons sequences fail to exceute on robot"""
-
         if not self._sequence.name:
             return False, "Sequence has no name"
+
         if not self._sequence.slices_per_minute:
             return False, "Must specify slices per minute"
 
         if not self._sequence.moves:
-            return False, "Sequence must contain at least 1 moves"
+            return False, "Sequence must contain at least 1 move"
 
         for idx, move in enumerate(self._sequence.moves):
             if move.start_slice < 0:
@@ -389,4 +467,8 @@ class SequenceBuilder:
                         f" is {min_slices}-{max_slices}"
                     ),
                 )
+            res, msg = self.validate_move(move)
+            if not res:
+                return False, f"Move failed to validate: {msg}"
+
         return True, "success"
