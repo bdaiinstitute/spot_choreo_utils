@@ -139,7 +139,7 @@ class SequenceBuilder:
         for move in moves_list:
             move_type = move.pop("type", None)
             move_adder = getattr(self, "add_" + move_type, None)
-            if move_adder:
+            if move_adder is not None:
                 move_adder(**move)
             else:
                 raise ValueError(f"Unsupported move type: {move_type}")
@@ -210,7 +210,7 @@ class SequenceBuilder:
         pitch: float = 0.05,
         yaw: float = 0.00,
         return_to_start_pose: bool = True,
-    ) -> None:
+    ) -> Tuple[bool, str]:
         """
         Add a rotate_body to the sequence
 
@@ -247,19 +247,16 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.rotate_body_params.CopyFrom(rotate_body_params)
 
-        try:
-            res, msg = self.validate_move(move_params)
-            if not res:
-                if self._logger is not None:
-                    self._logger.warning(f"Failed to validate move: {msg}. Not adding this move to sequence.")
-                return
-        except ValueError as e:
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
             if self._logger is not None:
-                self._logger.warning(f"Cannot add move to sequence. Move validation exception: {e}")
-            return
+                self._logger.warning(fail_str)
+            return False, fail_str
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
+        return True, "success"
 
     def add_sway(
         self,
@@ -272,7 +269,7 @@ class SequenceBuilder:
         style: Any = SwayParams.SwayStyle.SWAY_STYLE_STANDARD,
         pronounced: float = 0.5,
         hold_zero_axes: bool = False,
-    ) -> None:
+    ) -> Tuple[bool, str]:
         """
         Add a sway to the sequence
 
@@ -320,21 +317,18 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.sway_params.CopyFrom(sway_params)
 
-        try:
-            res, msg = self.validate_move(move_params)
-            if not res:
-                if self._logger is not None:
-                    self._logger.warning(f"Failed to validate move: {msg}. Not adding this move to sequence.")
-                return
-        except ValueError as e:
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
             if self._logger is not None:
-                self._logger.warning(f"Cannot add move to sequence. Move validation exception: {e}")
-            return
+                self._logger.warning(fail_str)
+            return False, fail_str
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
+        return True, "success"
 
-    def add_twerk(self, start_sec: float, duration_sec: float, height: float = 0.05) -> None:
+    def add_twerk(self, start_sec: float, duration_sec: float, height: float = 0.05) -> Tuple[bool, str]:
         """
         Add a twerk to the sequence
 
@@ -365,19 +359,16 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.twerk_params.CopyFrom(twerk_params)
 
-        try:
-            res, msg = self.validate_move(move_params)
-            if not res:
-                if self._logger is not None:
-                    self._logger.warning(f"Failed to validate move: {msg}. Not adding this move to sequence.")
-                return
-        except ValueError as e:
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
             if self._logger is not None:
-                self._logger.warning(f"Cannot add move to sequence. Move validation exception: {e}")
-            return
+                self._logger.warning(fail_str)
+            return False, fail_str
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
+        return True, "success"
 
     def add_bourree(
         self,
@@ -387,7 +378,7 @@ class SequenceBuilder:
         velocity_y: float = 0.00,
         yaw_rate: float = 0.05,
         stance_length: float = 0.00,
-    ) -> None:
+    ) -> Tuple[bool, str]:
         """
         Add a bourree to the sequence
 
@@ -424,19 +415,16 @@ class SequenceBuilder:
         move_params.requested_slices = requested_slices
         move_params.bourree_params.CopyFrom(bourree_params)
 
-        try:
-            res, msg = self.validate_move(move_params)
-            if not res:
-                if self._logger is not None:
-                    self._logger.warning(f"Failed to validate move: {msg}. Not adding this move to sequence.")
-                return
-        except ValueError as e:
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
             if self._logger is not None:
-                self._logger.warning(f"Cannot add move to sequence. Move validation exception: {e}")
-            return
+                self._logger.warning(fail_str)
+            return False, fail_str
 
         # Add to the sequence
         self._sequence.moves.append(move_params)
+        return True, "success"
 
     def build(self) -> ChoreographySequence:
         """
