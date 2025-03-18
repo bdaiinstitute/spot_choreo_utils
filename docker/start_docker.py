@@ -33,6 +33,13 @@ def start_container(image_name: str, container_name: str) -> None:
     run_args += ["-e", f"GID={os.getgid()}"]
     run_args += ["--device", "/dev/snd"]
 
+    # Mount the PulseAudio socket for audio forwarding
+    run_args += ["-v", f"/run/user/{os.getuid()}/pulse/native:/run/pulse/native"]
+    # Set environment variable for PulseAudio server inside container
+    run_args += ["-e", "PULSE_SERVER=unix:/run/pulse/native"]
+    # Optionally, set the SDL audio driver to use PulseAudio
+    run_args += ["-e", "SDL_AUDIODRIVER=pulse"]
+
     # Set the working directory
     run_args += ["-w", "/workspaces/spot_choreo_utils"]
 
