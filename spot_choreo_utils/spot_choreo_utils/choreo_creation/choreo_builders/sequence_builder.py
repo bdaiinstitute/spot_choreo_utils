@@ -6,11 +6,16 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from bosdyn.api.spot.choreography_params_pb2 import (
     AnimateParams,
+    ArmMoveFrame,
     BourreeParams,
+    ButtCircleParams,
+    ChickenHeadParams,
+    Easing,
     Pivot,
     RotateBodyParams,
     SwayParams,
     TwerkParams,
+    WorkspaceArmMoveParams,
 )
 from bosdyn.api.spot.choreography_sequence_pb2 import (
     Animation,
@@ -34,6 +39,19 @@ PARAM_NAME_TO_BOUNDS = {
     "bourree_velocity_y": (-0.5, 0.5),
     "bourree_yaw_rate": (-0.7, 0.7),
     "bourree_stance_length": (0.15, 0.8),
+    "butt_circle_radius": (0.0, 0.2),
+    "butt_circle_beats_per_circle": (0.1, 8.0),
+    "butt_circle_number_of_circles": (0.0, 100.0),
+    "butt_circle_starting_angle": (-3.14, 3.14),
+    "workspace_arm_move_rotation_roll": (-3.14, 3.14),
+    "workspace_arm_move_rotation_pitch": (-3.14, 3.14),
+    "workspace_arm_move_rotation_yaw": (-3.14, 3.14),
+    "workspace_arm_move_translation_x": (-1.50, 1.50),
+    "workspace_arm_move_translation_y": (-1.50, 1.50),
+    "workspace_arm_move_translation_z": (-1.50, 1.50),
+    "chicken_head_bob_magnitude_x": (-0.50, 0.50),
+    "chicken_head_bob_magnitude_y": (-0.50, 0.50),
+    "chicken_head_bob_magnitude_z": (-0.50, 0.50),
 }
 
 
@@ -200,6 +218,34 @@ class SequenceBuilder:
         params.velocity_y.CopyFrom(self._clamp_param("bourree_velocity_y", params.velocity_y))
         params.yaw_rate.CopyFrom(self._clamp_param("bourree_yaw_rate", params.yaw_rate))
         params.stance_length.CopyFrom(self._clamp_param("bourree_stance_length", params.stance_length))
+        return True, "Success"
+
+    def validate_workspace_arm_move(self, params: WorkspaceArmMoveParams) -> Tuple[bool, str]:
+        params.rotation.roll.CopyFrom(self._clamp_param("workspace_arm_move_rotation_roll", params.rotation.roll))
+        params.rotation.pitch.CopyFrom(self._clamp_param("workspace_arm_move_rotation_pitch", params.rotation.pitch))
+        params.rotation.yaw.CopyFrom(self._clamp_param("workspace_arm_move_rotation_yaw", params.rotation.yaw))
+        params.translation.x.CopyFrom(self._clamp_param("workspace_arm_move_translation_x", params.translation.x))
+        params.translation.y.CopyFrom(self._clamp_param("workspace_arm_move_translation_y", params.translation.y))
+        params.translation.z.CopyFrom(self._clamp_param("workspace_arm_move_translation_z", params.translation.z))
+        if params.frame not in ArmMoveFrame.values():
+            params.frame = WorkspaceArmMoveParams.ARM_MOVE_FRAME_CENTER_OF_FOOTPRINT
+        if params.easing not in Easing.values():
+            params.easing = Easing.EASING_LINEAR
+        return True, "Success"
+
+    def validate_chicken_head(self, params: ChickenHeadParams) -> Tuple[bool, str]:
+        params.bob_magnitude.x.CopyFrom(self._clamp_param("chicken_head_bob_magnitude_x", params.bob_magnitude.x))
+        params.bob_magnitude.y.CopyFrom(self._clamp_param("chicken_head_bob_magnitude_y", params.bob_magnitude.y))
+        params.bob_magnitude.z.CopyFrom(self._clamp_param("chicken_head_bob_magnitude_z", params.bob_magnitude.z))
+        return True, "Success"
+
+    def validate_butt_circle(self, params: ButtCircleParams) -> Tuple[bool, str]:
+        params.radius.CopyFrom(self._clamp_param("butt_circle_radius", params.radius))
+        params.beats_per_circle.CopyFrom(self._clamp_param("butt_circle_beats_per_circle", params.beats_per_circle))
+        params.roll.CopyFrom(self._clamp_param("butt_circle_rotation_roll", params.roll))
+        params.pitch.CopyFrom(self._clamp_param("butt_circle_rotation_pitch", params.pitch))
+        params.roll.CopyFrom(self._clamp_param("butt_circle_rotation_yaw", params.yaw))
+        params.starting_angle.CopyFrom(self._clamp_param("butt_circle_starting_angle", params.starting_angle))
         return True, "Success"
 
     def add_rotate_body(
@@ -414,6 +460,221 @@ class SequenceBuilder:
         move_params.start_slice = start_slice
         move_params.requested_slices = requested_slices
         move_params.bourree_params.CopyFrom(bourree_params)
+
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
+            if self._logger is not None:
+                self._logger.warning(fail_str)
+            return False, fail_str
+
+        # Add to the sequence
+        self._sequence.moves.append(move_params)
+        return True, "success"
+
+    def add_butt_circle(
+        self,
+        start_sec: Optional[float] = None,
+        duration_sec: Optional[float] = None,
+        start_slice: Optional[float] = None,
+        requested_slices: Optional[float] = None,
+        radius: float = 0.10,
+        beats_per_circle: float = 2.00,
+        number_of_circles: float = 0.00,
+        pivot: Any = Pivot.PIVOT_FRONT,
+        clockwise: bool = True,
+        starting_angle: float = 0.00,
+    ) -> Tuple[bool, str]:
+        """ """
+
+        if start_sec is not None and duration_sec is not None:
+            # Re-frame from time to slices
+            slices_per_second = self._sequence.slices_per_minute / 60
+            start_slice = int(start_sec * slices_per_second)
+            # Calculate the slices to request based on duration
+            requested_slices = max(int(duration_sec * slices_per_second), 1)
+        elif start_slice is None or requested_slices is None:
+            return False, "Either start_sec and duration_sec or start_slice and requested_slices must be provided."
+
+        # Construct the move-specific parameters
+        butt_circle_params = ButtCircleParams()
+        butt_circle_params.radius.value = radius
+        butt_circle_params.beats_per_circle.value = beats_per_circle
+        butt_circle_params.number_of_circles.value = number_of_circles
+        butt_circle_params.pivot = pivot
+        butt_circle_params.clockwise.value = clockwise
+        butt_circle_params.starting_angle.value = starting_angle
+
+        # Set up its role within the sequence
+        move_params = MoveParams()
+        move_params.type = "butt_circle"
+        move_params.start_slice = start_slice
+        move_params.requested_slices = requested_slices
+        move_params.butt_circle_params.CopyFrom(butt_circle_params)
+
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
+            if self._logger is not None:
+                self._logger.warning(fail_str)
+            return False, fail_str
+
+        # Add to the sequence
+        self._sequence.moves.append(move_params)
+        return True, "success"
+
+    def add_stow(
+        self,
+        start_sec: Optional[float] = None,
+        duration_sec: Optional[float] = None,
+        start_slice: Optional[float] = None,
+        requested_slices: Optional[float] = None,
+    ) -> Tuple[bool, str]:
+        """ """
+
+        if start_sec is not None and duration_sec is not None:
+            # Re-frame from time to slices
+            slices_per_second = self._sequence.slices_per_minute / 60
+            start_slice = int(start_sec * slices_per_second)
+            # Calculate the slices to request based on duration
+            requested_slices = max(int(duration_sec * slices_per_second), 1)
+        elif start_slice is None or requested_slices is None:
+            return False, "Either start_sec and duration_sec or start_slice and requested_slices must be provided."
+
+        # Set up its role within the sequence
+        move_params = MoveParams()
+        move_params.type = "stow"
+        move_params.start_slice = start_slice
+        move_params.requested_slices = requested_slices
+
+        # Add to the sequence
+        self._sequence.moves.append(move_params)
+        return True, "success"
+
+    def add_unstow(
+        self,
+        start_sec: Optional[float] = None,
+        duration_sec: Optional[float] = None,
+        start_slice: Optional[float] = None,
+        requested_slices: Optional[float] = None,
+    ) -> Tuple[bool, str]:
+        """ """
+
+        if start_sec is not None and duration_sec is not None:
+            # Re-frame from time to slices
+            slices_per_second = self._sequence.slices_per_minute / 60
+            start_slice = int(start_sec * slices_per_second)
+            # Calculate the slices to request based on duration
+            requested_slices = max(int(duration_sec * slices_per_second), 1)
+        elif start_slice is None or requested_slices is None:
+            return False, "Either start_sec and duration_sec or start_slice and requested_slices must be provided."
+
+        # Set up its role within the sequence
+        move_params = MoveParams()
+        move_params.type = "unstow"
+        move_params.start_slice = start_slice
+        move_params.requested_slices = requested_slices
+
+        # Add to the sequence
+        self._sequence.moves.append(move_params)
+        return True, "success"
+
+    def add_workspace_arm_move(
+        self,
+        start_sec: Optional[float] = None,
+        duration_sec: Optional[float] = None,
+        start_slice: Optional[float] = None,
+        requested_slices: Optional[float] = None,
+        roll: float = 0.05,
+        pitch: float = 0.05,
+        yaw: float = 0.05,
+        translation_x: float = 0.00,
+        translation_y: float = 0.00,
+        translation_z: float = 0.00,
+        absolute: bool = False,
+        frame: Any = ArmMoveFrame.ARM_MOVE_FRAME_CENTER_OF_FOOTPRINT,
+        easing: Any = Easing.EASING_CUBIC_IN_OUT,
+        dance_frame_id: int = 0,
+    ) -> Tuple[bool, str]:
+        """ """
+
+        if start_sec is not None and duration_sec is not None:
+            # Re-frame from time to slices
+            slices_per_second = self._sequence.slices_per_minute / 60
+            start_slice = int(start_sec * slices_per_second)
+            # Calculate the slices to request based on duration
+            requested_slices = max(int(duration_sec * slices_per_second), 1)
+        elif start_slice is None or requested_slices is None:
+            return False, "Either start_sec and duration_sec or start_slice and requested_slices must be provided."
+
+        # Construct the move-specific parameters
+        workspace_arm_move_params = WorkspaceArmMoveParams()
+        workspace_arm_move_params.rotation.roll.value = roll
+        workspace_arm_move_params.rotation.pitch.value = pitch
+        workspace_arm_move_params.rotation.yaw.value = yaw
+        workspace_arm_move_params.translation.x.value = translation_x
+        workspace_arm_move_params.translation.y.value = translation_y
+        workspace_arm_move_params.translation.z.value = translation_z
+        workspace_arm_move_params.absolute.value = absolute
+        workspace_arm_move_params.frame = frame
+        workspace_arm_move_params.easing = easing
+        workspace_arm_move_params.dance_frame_id.value = dance_frame_id
+
+        # Set up its role within the sequence
+        move_params = MoveParams()
+        move_params.type = "workspace_arm_move"
+        move_params.start_slice = start_slice
+        move_params.requested_slices = requested_slices
+        move_params.workspace_arm_move_params.CopyFrom(workspace_arm_move_params)
+
+        res, msg = self.validate_move(move_params)
+        if not res:
+            fail_str = f"Failed to validate move: {msg}. Not adding this move to sequence."
+            if self._logger is not None:
+                self._logger.warning(fail_str)
+            return False, fail_str
+
+        # Add to the sequence
+        self._sequence.moves.append(move_params)
+        return True, "success"
+
+    def add_chicken_head(
+        self,
+        start_sec: Optional[float] = None,
+        duration_sec: Optional[float] = None,
+        start_slice: Optional[float] = None,
+        requested_slices: Optional[float] = None,
+        bob_magnitude_x: float = 0.00,
+        bob_magnitude_y: float = 0.00,
+        bob_magnitude_z: float = 0.00,
+        beats_per_cycle: int = 2,
+        follow: bool = False,
+    ) -> Tuple[bool, str]:
+        """ """
+
+        if start_sec is not None and duration_sec is not None:
+            # Re-frame from time to slices
+            slices_per_second = self._sequence.slices_per_minute / 60
+            start_slice = int(start_sec * slices_per_second)
+            # Calculate the slices to request based on duration
+            requested_slices = max(int(duration_sec * slices_per_second), 1)
+        elif start_slice is None or requested_slices is None:
+            return False, "Either start_sec and duration_sec or start_slice and requested_slices must be provided."
+
+        # Construct the move-specific parameters
+        chicken_head_params = ChickenHeadParams()
+        chicken_head_params.bob_magnitude.x.value = bob_magnitude_x
+        chicken_head_params.bob_magnitude.y.value = bob_magnitude_y
+        chicken_head_params.bob_magnitude.z.value = bob_magnitude_z
+        chicken_head_params.beats_per_cycle.value = beats_per_cycle
+        chicken_head_params.follow.value = follow
+
+        # Set up its role within the sequence
+        move_params = MoveParams()
+        move_params.type = "chicken_head"
+        move_params.start_slice = start_slice
+        move_params.requested_slices = requested_slices
+        move_params.chicken_head_params.CopyFrom(chicken_head_params)
 
         res, msg = self.validate_move(move_params)
         if not res:
