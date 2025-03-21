@@ -87,7 +87,6 @@ PARAM_NAME_TO_BOUNDS = {
 
 
 
->>>>>>> Stashed changes
 }
 
 
@@ -215,7 +214,8 @@ class SequenceBuilder:
                     f"Animation move is validated during build(), skipping validation."
                 ),
             )
-        elif move_params.type == "stow" or move_params.type == "unstow":
+
+        if move_params.type == "stow" or move_params.type == "unstow":
             return (
                 True,
                 (
@@ -223,14 +223,13 @@ class SequenceBuilder:
                 ),
             )
 
-        if move_params.type == "turn":
-            move_params.type.replace("turn", "turn_2step")
-            ## TODO: less hacky solution to fix BD's bug
-
-        # move_specific_validator = getattr(self, "validate_" + move_params.type, None)
+        ## Need to handle certain moves manually, as BD's naming occasionally overlaps or is inconsistent
         if move_params.type == "rotate_body_sharp":
             move_specific_validator = self.validate_rotate_body_sharp
             move_specific_params = move_params.rotate_body_params
+        elif move_params.type == "turn_2step":
+            move_specific_validator = self.validate_turn
+            move_specific_params = move_params.turn_params
         else:
             move_specific_validator = getattr(self, "validate_" + move_params.type, None)
             move_specific_params = getattr(move_params, move_params.type + "_params", None)
@@ -262,12 +261,13 @@ class SequenceBuilder:
         return value_pb
 
     def validate_rotate_body(self, params: RotateBodyParams) -> Tuple[bool, str]:
-        params.start_slice.CopyFrom(self._clamp_param("start_slice", params.start_slice))
-        params.requested_slices.CopyFrom(self._clamp_param("requested_slices", params.requested_slices))
-        params.roll.CopyFrom(self._clamp_param("rotate_body_roll", params.roll))
-        params.pitch.CopyFrom(self._clamp_param("rotate_body_pitch", params.pitch))
-        params.yaw.CopyFrom(self._clamp_param("rotate_body_yaw", params.yaw))
+        params.rotation.roll.CopyFrom(self._clamp_param("rotate_body_roll", params.rotation.roll))
+        params.rotation.pitch.CopyFrom(self._clamp_param("rotate_body_pitch", params.rotation.pitch))
+        params.rotation.yaw.CopyFrom(self._clamp_param("rotate_body_yaw", params.rotation.yaw))
         return True, "Success"
+
+    def validate_rotate_body_sharp(self, params: RotateBodyParams) -> Tuple[bool, str]:
+        return self.validate_rotate_body(params)
 
     def validate_sway(self, params: SwayParams) -> Tuple[bool, str]:
         params.vertical.CopyFrom(self._clamp_param("sway_vertical", params.vertical))
@@ -299,12 +299,6 @@ class SequenceBuilder:
         params.absolute_yaw.CopyFrom(self._clamp_param("turn_absolute_yaw", params.absolute_yaw))
         params.swing_height.CopyFrom(self._clamp_param("turn_swing_height", params.swing_height))
         params.swing_velocity.CopyFrom(self._clamp_param("turn_swing_velocity", params.swing_velocity))
-        return True, "Success"
-
-    def validate_rotate_body_sharp(self, params: RotateBodyParams) -> Tuple[bool, str]:
-        # params.rotation.roll.CopyFrom(self._clamp_param("rotate_body_rotation_roll", params.rotation.roll))
-        # params.rotation.pitch.CopyFrom(self._clamp_param("rotate_body_rotation_pitch", params.rotation.pitch))
-        # params.rotation.yaw.CopyFrom(self._clamp_param("rotate_body_rotation_yaw", params.rotation.yaw))
         return True, "Success"
 
     def validate_fidget_stand(self, params: FidgetStandParams) -> Tuple[bool, str]:
@@ -363,9 +357,7 @@ class SequenceBuilder:
     def validate_butt_circle(self, params: ButtCircleParams) -> Tuple[bool, str]:
         params.radius.CopyFrom(self._clamp_param("butt_circle_radius", params.radius))
         params.beats_per_circle.CopyFrom(self._clamp_param("butt_circle_beats_per_circle", params.beats_per_circle))
-        params.roll.CopyFrom(self._clamp_param("butt_circle_rotation_roll", params.roll))
-        params.pitch.CopyFrom(self._clamp_param("butt_circle_rotation_pitch", params.pitch))
-        params.roll.CopyFrom(self._clamp_param("butt_circle_rotation_yaw", params.yaw))
+        params.number_of_circles.CopyFrom(self._clamp_param("butt_circle_number_of_circles", params.number_of_circles))
         params.starting_angle.CopyFrom(self._clamp_param("butt_circle_starting_angle", params.starting_angle))
         return True, "Success"
 
@@ -648,17 +640,23 @@ class SequenceBuilder:
         # Construct the move-specific parameters
         turn_params = TurnParams()
         turn_params.motion_is_absolute.value = motion_is_absolute
-        turn_params.motion.x.value = motion_x
-        turn_params.motion.y.value = motion_x
-        turn_params.absolute_motion.x.value = motion_x
-        turn_params.absolute_motion.y.value = motion_x
+        if motion_is_absolute:
+            turn_params.absolute_motion.x.value = absolute_motion_y
+            turn_params.absolute_motion.y.value = absolute_motion_y
+        else:
+            turn_params.motion.x.value = motion_x
+            turn_params.motion.y.value = motion_y
         turn_params.yaw_is_absolute.value = yaw_is_absolute
-        turn_params.absolute_yaw.value = absolute_yaw
+        if yaw_is_absolute:
+            turn_params.absolute_yaw.value = yaw
+        else:
+            turn_params.yaw.value = yaw
+        turn_params.swing_height.value = swing_height
         turn_params.swing_velocity.value = swing_velocity
 
         # Set up its role within the sequence
         move_params = MoveParams()
-        move_params.type = "turn"
+        move_params.type = "turn_2step"
         move_params.start_slice = start_slice
         move_params.requested_slices = requested_slices
         move_params.turn_params.CopyFrom(turn_params)
