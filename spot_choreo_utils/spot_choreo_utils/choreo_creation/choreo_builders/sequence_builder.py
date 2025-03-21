@@ -85,9 +85,6 @@ PARAM_NAME_TO_BOUNDS = {
     "fidget_stand_gaze_position_generation_gain_z": (0.00, 1.00),
     "fidget_stand_gaze_roll_generation_gain": (0.00, 2.00),
 
-
-
->>>>>>> Stashed changes
 }
 
 
