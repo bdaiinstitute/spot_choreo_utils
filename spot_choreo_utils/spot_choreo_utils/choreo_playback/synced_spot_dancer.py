@@ -32,28 +32,12 @@ class SyncedSpotDancer(SyncedPerformanceModality):
     getting to the first keyframe, and other considerations are all handled automatically
     """
 
-    def __init__(
-        self,
-        username: str,
-        password: str,
-        hostname: str,
-        robot_name: str,
-        port: int = 0,
-        logger: Optional[Logger] = None,
-    ) -> None:
+    def __init__(self, spot_wrapper: SpotWrapper, logger: Optional[Logger] = None) -> None:
         if logger is None:
-            logger = Logger(f"Synced Spot Dancer {robot_name}")
+            logger = Logger(f"Synced Spot Dancer {spot_wrapper.robot_name}")
 
         self._logger = logger
-        self._spot_wrapper = SpotWrapper(
-            username=username,
-            password=password,
-            hostname=hostname,
-            robot_name=robot_name,
-            logger=logger,
-            use_take_lease=True,
-            port=port,
-        )
+        self._spot_wrapper = spot_wrapper
 
         self._animation: Optional[Animation] = None
         self._animation_builder: Optional[AnimationBuilder] = None
