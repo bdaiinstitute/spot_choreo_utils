@@ -11,15 +11,13 @@ from bosdyn.api.spot.choreography_params_pb2 import (
     ButtCircleParams,
     ChickenHeadParams,
     Easing,
+    FidgetStandParams,
     Pivot,
     RotateBodyParams,
     SwayParams,
-    TwerkParams,
     TurnParams,
-    RotateBodyParams,
-    FidgetStandParams,
+    TwerkParams,
     WorkspaceArmMoveParams,
-    EulerZYXValue,
 )
 from bosdyn.api.spot.choreography_sequence_pb2 import (
     Animation,
@@ -84,9 +82,6 @@ PARAM_NAME_TO_BOUNDS = {
     "fidget_stand_gaze_position_generation_gain_y": (0.00, 1.00),
     "fidget_stand_gaze_position_generation_gain_z": (0.00, 1.00),
     "fidget_stand_gaze_roll_generation_gain": (0.00, 2.00),
-
-
-
 }
 
 
@@ -180,7 +175,7 @@ class SequenceBuilder:
                             {
                                 "type": "twerk",
                                 "start_slice": 48,
-                                "requested_slices": 24, 
+                                "requested_slices": 24,
                                 "height": 0.1
                             },
                         ]
@@ -195,7 +190,7 @@ class SequenceBuilder:
             move_adder = getattr(self, "add_" + move_type, None)
 
             # If this move lacks a specified start time, make it start immediately after the previous move in the list
-            no_start_time = 'start_sec' not in move and 'start_slice' not in move
+            no_start_time = "start_sec" not in move and "start_slice" not in move
             if no_start_time:
                 move["start_slice"] = prev_end_slice
                 # TODO: refactor here and elsewhere so we stick to slices by default prob
@@ -210,30 +205,27 @@ class SequenceBuilder:
         if move_params.type == "animation":
             return (
                 True,
-                (
-                    f"Animation move is validated during build(), skipping validation."
-                ),
+                "Animation move is validated during build(), skipping validation.",
             )
 
         if move_params.type == "stow" or move_params.type == "unstow":
             return (
                 True,
-                (
-                    f"This move has no params, skipping validation."
-                ),
+                "This move has no params, skipping validation.",
             )
 
         ## Need to handle certain moves manually, as BD's naming occasionally overlaps or is inconsistent
-        if move_params.type == "rotate_body_sharp":
-            move_specific_validator = self.validate_rotate_body_sharp
-            move_specific_params = move_params.rotate_body_params
-        elif move_params.type == "turn_2step":
+        if move_params.type == "rotate_body_sharp":  # because rotate_body_sharp shares rotate_body's RotateBodyParams
+            move_specific_validator: Optional[Any] = self.validate_rotate_body_sharp
+            move_specific_params: Optional[Any] = move_params.rotate_body_params
+        elif (
+            move_params.type == "turn_2step"
+        ):  # because BD's turn_2step move uses TurnParams, not Turn2StepParams as we might expect
             move_specific_validator = self.validate_turn
             move_specific_params = move_params.turn_params
         else:
             move_specific_validator = getattr(self, "validate_" + move_params.type, None)
             move_specific_params = getattr(move_params, move_params.type + "_params", None)
-
 
         if move_specific_validator is None or move_specific_params is None:
             return (
@@ -496,12 +488,12 @@ class SequenceBuilder:
         return True, "success"
 
     def add_twerk(
-        self, 
+        self,
         start_sec: Optional[float] = None,
         duration_sec: Optional[float] = None,
         start_slice: Optional[float] = None,
         requested_slices: Optional[float] = None,
-        height: float = 0.05
+        height: float = 0.05,
     ) -> Tuple[bool, str]:
         """
         Add a twerk to the sequence
@@ -673,7 +665,7 @@ class SequenceBuilder:
         return True, "success"
 
     def add_butt_circle(
-        self, 
+        self,
         start_sec: Optional[float] = None,
         duration_sec: Optional[float] = None,
         start_slice: Optional[float] = None,
@@ -724,7 +716,7 @@ class SequenceBuilder:
         return True, "success"
 
     def add_rotate_body_sharp(
-        self, 
+        self,
         start_sec: Optional[float] = None,
         duration_sec: Optional[float] = None,
         start_slice: Optional[float] = None,
@@ -734,8 +726,7 @@ class SequenceBuilder:
         yaw: float = 0.00,
         return_to_start_pose: bool = True,
     ) -> Tuple[bool, str]:
-        """
-        """
+        """ """
 
         if start_sec is not None and duration_sec is not None:
             # Re-frame from time to slices
@@ -752,8 +743,6 @@ class SequenceBuilder:
         rotate_body_sharp_params.rotation.pitch.value = pitch
         rotate_body_sharp_params.rotation.yaw.value = yaw
         rotate_body_sharp_params.return_to_start_pose.value = return_to_start_pose
-
-
 
         # Set up its role within the sequence
         move_params = MoveParams()
@@ -772,9 +761,9 @@ class SequenceBuilder:
         # Add to the sequence
         self._sequence.moves.append(move_params)
         return True, "success"
-        
+
     def add_fidget_stand(
-        self, 
+        self,
         start_sec: Optional[float] = None,
         duration_sec: Optional[float] = None,
         start_slice: Optional[float] = None,
@@ -798,8 +787,7 @@ class SequenceBuilder:
         gaze_position_generation_gain_z: float = 0.30,
         gaze_roll_generation_gain: float = 0.60,
     ) -> Tuple[bool, str]:
-        """
-        """
+        """ """
 
         if start_sec is not None and duration_sec is not None:
             # Re-frame from time to slices
@@ -851,14 +839,13 @@ class SequenceBuilder:
         return True, "success"
 
     def add_stow(
-        self, 
+        self,
         start_sec: Optional[float] = None,
         duration_sec: Optional[float] = None,
         start_slice: Optional[float] = None,
         requested_slices: Optional[float] = None,
     ) -> Tuple[bool, str]:
-        """
-        """
+        """ """
 
         if start_sec is not None and duration_sec is not None:
             # Re-frame from time to slices
@@ -880,14 +867,13 @@ class SequenceBuilder:
         return True, "success"
 
     def add_unstow(
-        self, 
+        self,
         start_sec: Optional[float] = None,
         duration_sec: Optional[float] = None,
         start_slice: Optional[float] = None,
         requested_slices: Optional[float] = None,
     ) -> Tuple[bool, str]:
-        """
-        """
+        """ """
 
         if start_sec is not None and duration_sec is not None:
             # Re-frame from time to slices
@@ -925,8 +911,7 @@ class SequenceBuilder:
         easing: Any = Easing.EASING_CUBIC_IN_OUT,
         dance_frame_id: int = 0,
     ) -> Tuple[bool, str]:
-        """
-        """
+        """ """
 
         if start_sec is not None and duration_sec is not None:
             # Re-frame from time to slices
@@ -949,7 +934,6 @@ class SequenceBuilder:
         workspace_arm_move_params.frame = frame
         workspace_arm_move_params.easing = easing
         workspace_arm_move_params.dance_frame_id.value = dance_frame_id
-
 
         # Set up its role within the sequence
         move_params = MoveParams()
@@ -981,8 +965,7 @@ class SequenceBuilder:
         beats_per_cycle: int = 2,
         follow: bool = False,
     ) -> Tuple[bool, str]:
-        """
-        """
+        """ """
 
         if start_sec is not None and duration_sec is not None:
             # Re-frame from time to slices
