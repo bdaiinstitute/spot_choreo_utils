@@ -159,7 +159,7 @@ class SyncedSpotDancer(SyncedPerformanceModality):
         # If the sequence starts with a BOSDYN move, there's no need to set the robot pose
         # before the dance starts. If it starts with an animation, interpolate to the first
         # keyframe location so that the dance starts at the correct location
-        if self._sequence and self._sequence.moves[0].type != "animation":
+        if self._sequence is not None and self._sequence.moves[0].type != "animation":
             return True
 
         # Now upload and play a dance that is just the starting keyframe
