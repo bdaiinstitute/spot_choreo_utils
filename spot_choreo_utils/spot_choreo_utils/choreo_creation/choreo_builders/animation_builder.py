@@ -51,8 +51,8 @@ class AnimationBuilder:
         apply_stance_to_all_keyframes: bool = True
 
     def __init__(self, logger: Optional[Logger] = None) -> None:
-        if logger is None:
-            logger = Logger("animation_builder")
+        #if logger is None:
+        #    logger = Logger("animation_builder")
 
         self._animation = Animation()
         self._logger: Logger = logger
@@ -60,8 +60,8 @@ class AnimationBuilder:
     @classmethod
     def from_animation(cls, animation: Animation, logger: Optional[Logger] = None) -> "AnimationBuilder":
         """Transform animation into animation builder"""
-        if logger is None:
-            logger = Logger("animation_builder_logger")
+        #if logger is None:
+        #    logger = Logger("animation_builder_logger")
         animation_builder = AnimationBuilder(logger)
         animation_builder.start_from_animation(animation)
         return animation_builder
@@ -99,7 +99,10 @@ class AnimationBuilder:
     @property
     def keyframe_timestamps(self) -> List[float]:
         """Return a list of all keyframe timestamps"""
-        return [keyframe.time for keyframe in self._animation.animation_keyframes]
+        if not hasattr(self, "_keyframe_timestamps"): 
+            self._keyframe_timestamps = [keyframe.time for keyframe in self._animation.animation_keyframes]
+        return self._keyframe_timestamps
+
 
     @property
     def animation_length_s(self) -> float:
