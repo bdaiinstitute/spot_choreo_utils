@@ -43,6 +43,11 @@ To start animating:
   - Type an animation name into the terminal 
   - Open a seperate tab to localhost:7000 for web visualizer
 
+  - # start frontend:
+    - cd frontend
+    - npm install
+    - npm start
+
 Use the animation sliders to set robot poses, and then use the Save Pose As Keyframe button to add the pose to an animation. The animation you create will be saved to the active directory under choreo_files.
 
 # Contributing to this repo
