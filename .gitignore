@@ -10,3 +10,7 @@ undecided
 .ipython/
 .jupyter/
 .local/
+node_modules/
+__pycache__/
+*.egg-info/
+*.egg
