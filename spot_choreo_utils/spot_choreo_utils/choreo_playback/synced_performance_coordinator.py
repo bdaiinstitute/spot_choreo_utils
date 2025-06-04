@@ -15,8 +15,12 @@ class SyncedPerformanceCoordinator:
         self._modalities: list[SyncedPerformanceModality] = []
 
     def add_modality(self, modality: SyncedPerformanceModality) -> None:
-        """Add a new performance modality to plyabck"""
+        """Add a new performance modality to playback"""
         self._modalities.append(modality)
+
+    def clear(self) -> None:
+        """Clears out all coordinator settings so that a new performance can re-use the same instance"""
+        self._modalities = []
 
     async def prep_performance(self, config: SyncedPeroformanceConfig) -> None:
         """Have all of the modalities preprare for the performance"""
