@@ -276,8 +276,8 @@ class SequenceBuilder:
         return True, "Success"
 
     def validate_bourree(self, params: BourreeParams) -> Tuple[bool, str]:
-        params.velocity_x.CopyFrom(self._clamp_param("bourree_velocity_x", params.velocity_x))
-        params.velocity_y.CopyFrom(self._clamp_param("bourree_velocity_y", params.velocity_y))
+        params.velocity.x.CopyFrom(self._clamp_param("bourree_velocity_x", params.velocity.x))
+        params.velocity.y.CopyFrom(self._clamp_param("bourree_velocity_y", params.velocity.y))
         params.yaw_rate.CopyFrom(self._clamp_param("bourree_yaw_rate", params.yaw_rate))
         params.stance_length.CopyFrom(self._clamp_param("bourree_stance_length", params.stance_length))
         return True, "Success"
@@ -547,7 +547,7 @@ class SequenceBuilder:
         velocity_x: float = 0.00,
         velocity_y: float = 0.00,
         yaw_rate: float = 0.05,
-        stance_length: float = 0.00,
+        stance_length: float = 0.60,
     ) -> Tuple[bool, str]:
         """
         Add a bourree to the sequence

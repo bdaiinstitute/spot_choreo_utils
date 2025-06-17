@@ -74,7 +74,7 @@ class SyncedSpotDancer(SyncedPerformanceModality):
 
             # Insert an interpolated keyframe for the exact start time if the requested start time
             # does not fall on an exact spot keyframe
-            if not math.isclose(0, local_builder.keyframe_timestamps[0]):
+            if not math.isclose(0, local_builder.keyframe_timestamps[0], abs_tol=1e-2):
                 # Insert an interpolation
                 tmp_animation = self._animation_builder.build()
                 keyframe = extract_pose_for_animation_time(tmp_animation, start_time_s)
