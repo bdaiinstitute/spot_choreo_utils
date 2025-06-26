@@ -25,6 +25,26 @@ class SyncedAudioPlayer(SyncedPerformanceModality):
         """Capture the config properties - no other setup necessary"""
         self.start_time = config.start_time_s + config.music_offset_s
         self.duration = config.end_time_s - config.start_time_s
+        # Load the audio file into ffplay's buffer without playing sound
+        self._process = subprocess.Popen(
+            [
+                "ffplay",
+                "-af",
+                "volume=0",
+                "-nodisp",
+                "-autoexit",
+                "-stats",
+                "-t",
+                "1",
+                "-hide_banner",
+                self._file_path,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        while self._process is not None and self._process.poll() is None:
+            await asyncio.sleep(0.01)
+        self._process = None
 
     async def start_performance(self) -> None:
         """Start the performance instantly so that all modalities stay in sync"""
