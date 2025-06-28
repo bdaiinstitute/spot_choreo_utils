@@ -1,0 +1,163 @@
+[0.010s] Invoking command in '/workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description -DCMAKE_INSTALL_PREFIX=/workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description
+[0.090s] -- The C compiler identification is GNU 11.4.0
+[0.192s] -- The CXX compiler identification is GNU 11.4.0
+[0.206s] -- Detecting C compiler ABI info
+[0.305s] -- Detecting C compiler ABI info - done
+[0.315s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.316s] -- Detecting C compile features
+[0.317s] -- Detecting C compile features - done
+[0.321s] -- Detecting CXX compiler ABI info
+[0.443s] -- Detecting CXX compiler ABI info - done
+[0.455s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.455s] -- Detecting CXX compile features
+[0.456s] -- Detecting CXX compile features - done
+[0.461s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.709s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[2.114s] -- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[2.519s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[2.519s] -- Configured cppcheck include dirs: 
+[2.519s] -- Configured cppcheck exclude dirs and/or files: 
+[2.574s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[2.575s] -- Configured cpplint exclude dirs and/or files: 
+[2.593s] -- Added test 'lint_cmake' to check CMake code style
+[2.603s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[2.653s] -- Added test 'uncrustify' to check C / C++ code style
+[2.653s] -- Configured uncrustify additional arguments: 
+[2.670s] -- Added test 'xmllint' to check XML markup files
+[2.670s] -- Configuring done
+[2.684s] -- Generating done
+[2.696s] -- Build files have been written to: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description
+[2.715s] Invoked command in '/workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description -DCMAKE_INSTALL_PREFIX=/workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description
+[2.716s] Invoking command in '/workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description -- -j14 -l14
+[2.851s] Invoked command in '/workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description -- -j14 -l14
+[2.881s] Invoking command in '/workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description
+[2.904s] -- Install configuration: ""
+[2.907s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/launch
+[2.907s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/launch/standalone_arm.launch.py
+[2.907s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/launch/description.launch.py
+[2.909s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf
+[2.910s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/spot_arm_macro.urdf
+[2.910s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/README.md
+[2.911s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/empty.urdf
+[2.911s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/accessories.urdf.xacro
+[2.912s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/out
+[2.912s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/out/standalone_arm.urdf
+[2.913s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/out/standalone_gripper.urdf
+[2.914s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/out/spot.urdf
+[2.917s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/spot_gripper_macro.urdf
+[2.917s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/spot.ros2_control.xacro
+[2.920s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/spot.urdf.xacro
+[2.921s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/spot_macro.xacro
+[2.923s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/standalone_gripper.urdf.xacro
+[2.924s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/spot_feet_macro.urdf
+[2.924s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/standalone_arm.urdf.xacro
+[2.925s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/urdf/spot_simple.urdf.xacro
+[2.926s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes
+[2.928s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm
+[2.928s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision
+[2.929s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/front_jaw.obj
+[2.930s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/middle_jaw.obj
+[2.930s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/arm_link_sh0_base.obj
+[2.934s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/right_finger.obj
+[2.934s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/right_hinge.obj
+[2.937s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/arm_link_el1_main.obj
+[2.938s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/arm_link_el1_lip.obj
+[2.939s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/arm_link_sh0_right_motor.obj
+[2.941s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/right_tooth.obj
+[2.942s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/arm_link_el0.obj
+[2.943s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/jaw_tooth.obj
+[2.944s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/arm_link_wr1.obj
+[2.945s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/arm_link_sh0_left_motor.obj
+[2.946s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/left_finger.obj
+[2.947s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/arm_link_wr0.obj
+[2.948s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/arm_link_hr0.obj
+[2.950s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/left_hinge.obj
+[2.952s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/collision/left_tooth.obj
+[2.953s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/visual
+[2.953s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/visual/arm_link_el1.obj
+[2.957s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/visual/arm_link_el0.obj
+[2.961s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/visual/arm_link_sh0.obj
+[2.962s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/visual/arm_link_sh1.obj
+[2.966s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/visual/arm_link_wr1.obj
+[2.969s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/visual/arm_link_fngr.obj
+[2.974s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/visual/arm_link_wr0.obj
+[2.976s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/arm/visual/arm_link_hr0.obj
+[2.980s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple
+[2.980s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision
+[2.981s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/hl_lleg.stl
+[2.981s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/fl_hip.stl
+[2.983s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/fl_lleg.stl
+[2.984s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/hl_uleg.stl
+[2.985s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/hl_hip.stl
+[2.986s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/fl_uleg.stl
+[2.988s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/hr_lleg.stl
+[2.989s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/hr_uleg.stl
+[2.991s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/hr_hip.stl
+[2.992s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/fr_lleg.stl
+[2.993s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/fr_uleg.stl
+[2.994s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/fr_hip.stl
+[2.995s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/collision/body.stl
+[2.997s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual
+[2.997s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/fl_uleg.obj
+[2.999s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/fl_lleg.obj
+[3.001s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/fr_hip.obj
+[3.003s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/fr_lleg.obj
+[3.004s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/hr_uleg.obj
+[3.007s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/hl_uleg.obj
+[3.008s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/hl_lleg.obj
+[3.010s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/hl_hip.obj
+[3.011s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/hr_lleg.obj
+[3.012s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/fr_uleg.obj
+[3.013s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/body.obj
+[3.015s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/hr_hip.obj
+[3.016s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base_simple/visual/fl_hip.obj
+[3.017s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/spot.mtl
+[3.017s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base
+[3.018s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/collision
+[3.018s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/collision/right_lower_leg_collision.obj
+[3.018s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/collision/right_upper_leg_collision.obj
+[3.019s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/collision/left_lower_leg_collision.obj
+[3.019s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/collision/velodyne_cage.stl
+[3.021s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/collision/left_upper_leg_collision.obj
+[3.022s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/collision/body_collision.obj
+[3.023s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/collision/velo_collision.stl
+[3.024s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/collision/lidar_mount_collision.stl
+[3.024s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual
+[3.025s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/front_right_upper_leg.obj
+[3.031s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/velo.obj
+[3.035s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/rear_right_upper_leg.obj
+[3.041s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/rear_left_hip.obj
+[3.047s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/pack_top.obj
+[3.048s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/rear_right_lower_leg.obj
+[3.054s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/spot_mat.png
+[3.056s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/rear_right_hip.obj
+[3.063s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/rear_left_upper_leg.obj
+[3.067s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/front_left_upper_leg.obj
+[3.073s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/lidar_mount.obj
+[3.075s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/front_right_lower_leg.obj
+[3.080s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/body.obj
+[3.105s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/rear_left_lower_leg.obj
+[3.110s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/front_left_hip.obj
+[3.114s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/spot_accessories.mtl
+[3.115s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/front_left_lower_leg.obj
+[3.118s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/front_right_hip.obj
+[3.122s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/meshes/base/visual/pack_body.obj
+[3.123s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/rviz
+[3.123s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/rviz/viz_spot.rviz
+[3.124s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/rviz/standalone_arm.rviz
+[3.125s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/ament_index/resource_index/package_run_dependencies/spot_description
+[3.126s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/ament_index/resource_index/parent_prefix_path/spot_description
+[3.127s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/environment/ament_prefix_path.sh
+[3.127s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/environment/ament_prefix_path.dsv
+[3.128s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/environment/path.sh
+[3.129s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/environment/path.dsv
+[3.129s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/local_setup.bash
+[3.130s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/local_setup.sh
+[3.130s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/local_setup.zsh
+[3.131s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/local_setup.dsv
+[3.132s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/package.dsv
+[3.132s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/ament_index/resource_index/packages/spot_description
+[3.133s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/cmake/spot_descriptionConfig.cmake
+[3.133s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/cmake/spot_descriptionConfig-version.cmake
+[3.134s] -- Installing: /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/install/spot_description/share/spot_description/package.xml
+[3.141s] Invoked command in '/workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /workspaces/spot_choreo_utils/spot_choreo_utils/web_animator/spot_web_animator/systems/external/spot_description/build/spot_description
