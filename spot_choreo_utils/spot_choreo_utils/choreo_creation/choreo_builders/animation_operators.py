@@ -10,7 +10,10 @@ from bosdyn.api.spot.choreography_sequence_pb2 import Animation, AnimationKeyfra
 from spot_choreo_utils.choreo_creation.choreo_builders.animation_builder import (
     AnimationBuilder,
 )
-from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import check_if_protobuf_field_set
+from spot_choreo_utils.choreo_creation.choreo_builders.animation_proto_utils import (
+    check_if_protobuf_field_set,
+    ensure_protobuf_compliance,
+)
 from spot_choreo_utils.choreo_creation.choreo_builders.sequence_builder import SequenceBuilder
 
 
@@ -221,6 +224,7 @@ def perform_keyframe_interpolation(
                     if logger:
                         logger.error(f"Unknown type {type(stop_ref)} for interpolation")
                     raise AssertionError()
+                interpolated_value = ensure_protobuf_compliance(interpolated_value)
                 setattr(modified, property, interpolated_value)
     return is_protobuf
 
@@ -237,8 +241,10 @@ def extract_pose_for_animation_time(
     if animation is None:
         return None
 
-    builder = AnimationBuilder.from_animation(animation)
-    builder.get_keyframe_before_timestamp(time_offset_in_animation)
+    if isinstance(animation, AnimationBuilder):
+        builder = animation
+    else:
+        builder = AnimationBuilder.from_animation(animation)
 
     (prev_keyframe_idx, prev_keyframe) = builder.get_keyframe_before_timestamp(time_offset_in_animation)
     if prev_keyframe_idx + 1 > builder.keyframe_count:

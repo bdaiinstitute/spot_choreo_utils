@@ -51,17 +51,17 @@ class AnimationBuilder:
         apply_stance_to_all_keyframes: bool = True
 
     def __init__(self, logger: Optional[Logger] = None) -> None:
-        if logger is None:
-            logger = Logger("animation_builder")
-
         self._animation = Animation()
-        self._logger: Logger = logger
+        self._logger: Optional[Logger] = logger
+
+    def _log_if_enabled(self, message: str) -> None:
+        """Logs if logger is available"""
+        if self._logger is not None:
+            self._logger.error(message)
 
     @classmethod
     def from_animation(cls, animation: Animation, logger: Optional[Logger] = None) -> "AnimationBuilder":
         """Transform animation into animation builder"""
-        if logger is None:
-            logger = Logger("animation_builder_logger")
         animation_builder = AnimationBuilder(logger)
         animation_builder.start_from_animation(animation)
         return animation_builder
@@ -73,7 +73,7 @@ class AnimationBuilder:
     def start_from_animation(self, animation_proto: Animation) -> None:
         """Modify an existing animation with builder helper functions"""
         if animation_proto is None:
-            self._logger.error("Passed None - can't start from animation")
+            self._log_if_enabled("Passed None - can't start from animation")
             return
         self._animation = copy.deepcopy(animation_proto)
         # Get rid of BPM paramater - it just creates confusion between the
@@ -87,7 +87,7 @@ class AnimationBuilder:
         return self._animation.name
 
     @property
-    def logger(self) -> Logger:
+    def logger(self) -> Optional[Logger]:
         """Returns the logger associated with the animation builder"""
         return self._logger
 
@@ -99,7 +99,9 @@ class AnimationBuilder:
     @property
     def keyframe_timestamps(self) -> List[float]:
         """Return a list of all keyframe timestamps"""
-        return [keyframe.time for keyframe in self._animation.animation_keyframes]
+        if not hasattr(self, "_keyframe_timestamps"):
+            self._keyframe_timestamps = [keyframe.time for keyframe in self._animation.animation_keyframes]
+        return self._keyframe_timestamps
 
     @property
     def animation_length_s(self) -> float:
@@ -118,10 +120,7 @@ class AnimationBuilder:
         keyframe_count = self.keyframe_count
 
         if keyframe_idx < 0 or keyframe_idx >= keyframe_count:
-            if self._logger:
-                self._logger.error(
-                    f"Requested keyframe at index {keyframe_idx} but animation length is {keyframe_count}"
-                )
+            self._log_if_enabled(f"Requested keyframe at index {keyframe_idx} but animation length is {keyframe_count}")
             return None
 
         return self._animation.animation_keyframes[keyframe_idx]
@@ -131,7 +130,7 @@ class AnimationBuilder:
         Returns a list of keyframes that fall in the start/end range
         """
         if start_idx > end_idx:
-            self._logger.error(f"Start index must be lower than end index: {start_idx} > {end_idx}")
+            self._log_if_enabled(f"Start index must be lower than end index: {start_idx} > {end_idx}")
             return []
         range_start = max(start_idx, 0)
         range_end = min(end_idx, self.keyframe_count)
@@ -146,7 +145,7 @@ class AnimationBuilder:
         second_keyframe = self.keyframe_at_index(second_index)
 
         if first_keyframe is None or second_keyframe is None or (first_index > second_index):
-            self._logger.error(
+            self._log_if_enabled(
                 f"Can't get time between keyframes when one doesn't exist. First index {first_index}, second index"
                 f" {second_index}"
             )
@@ -192,7 +191,7 @@ class AnimationBuilder:
         if build_settings.only_output_valid:
             res, msg = self.validate()
             if not res:
-                self._logger.error(f"Failed to build animation: {msg}")
+                self._log_if_enabled(f"Failed to build animation: {msg}")
                 return None
 
         # Create new copy for procedural edits that would conflict with
@@ -307,11 +306,11 @@ class AnimationBuilder:
 
         (insertion_idx, prior_keyframe) = self.get_keyframe_before_timestamp(start_time)
         if prior_keyframe is not None and prior_keyframe.time == keyframe.time:
-            self._logger.error(f"Can't insert keyframe at time {keyframe.time}, already exists. Overwrite instead")
+            self._log_if_enabled(f"Can't insert keyframe at time {keyframe.time}, already exists. Overwrite instead")
             return None
 
         if insertion_idx == 0 and self.keyframe_count > 0 and keyframe.time == 0:
-            self._logger.error("Can't have two keyframes at timestamp 0")
+            self._log_if_enabled("Can't have two keyframes at timestamp 0")
             return None
 
         self.insert_keyframe_at_index(
@@ -431,7 +430,7 @@ class AnimationBuilder:
         num_keyframes = self.keyframe_count
 
         if num_keyframes == 0 or keyframe_idx >= num_keyframes:
-            self._logger.error(
+            self._log_if_enabled(
                 f"Invalid keyframe index. Can't remove keyframe {keyframe_idx} from animation length {num_keyframes}"
             )
             return
@@ -439,16 +438,16 @@ class AnimationBuilder:
         # Remove the time between this keyframe and the next keyframe
         if adjust_trailing_keyframes and keyframe_idx < self.keyframe_count - 1:
             if not self.keyframe_at_index(keyframe_idx):
-                self._logger.error(f"Error accessing keyframe at index {str(keyframe_idx)}")
+                self._log_if_enabled(f"Error accessing keyframe at index {str(keyframe_idx)}")
                 return
             if not self.keyframe_at_index(keyframe_idx + 1):
-                self._logger.error(f"Error accessing keyframe at index {str(keyframe_idx + 1)}")
+                self._log_if_enabled(f"Error accessing keyframe at index {str(keyframe_idx + 1)}")
                 return
             time_between_keyframes = self.time_elapsed_between_keyframes(keyframe_idx, keyframe_idx + 1)
             for index_to_modify in range(keyframe_idx + 1, self.keyframe_count):
                 modify_keyframe = self.keyframe_at_index(index_to_modify)
                 if not modify_keyframe:
-                    self._logger.error(f"Error accessing keyframe at index {str(index_to_modify)}")
+                    self._log_if_enabled(f"Error accessing keyframe at index {str(index_to_modify)}")
                     return
                 modify_keyframe.time -= time_between_keyframes
 
@@ -459,7 +458,7 @@ class AnimationBuilder:
         """Adjust the start time for a keyframe"""
         keyframe = self.keyframe_at_index(keyframe_index)
         if keyframe is None:
-            self._logger.error(f"No keyframe at index {keyframe_index}")
+            self._log_if_enabled(f"No keyframe at index {keyframe_index}")
             return
         keyframe.time = new_start_time
 
@@ -472,7 +471,7 @@ class AnimationBuilder:
         gripper_angle = ensure_protobuf_compliance(gripper_angle, adjust_positive=False)
 
         if gripper_angle < -1 or gripper_angle > 0:
-            self._logger.error("INVALID GRIPPER ANGLE - MUST BE IN RANGE -1 to 0")
+            self._log_if_enabled("INVALID GRIPPER ANGLE - MUST BE IN RANGE -1 to 0")
             return
 
         self.create_keyframe_from_params(start_time=start_time, gripper=build_gripper_params(gripper_angle))

@@ -220,13 +220,13 @@ def build_leg_params(
     rear_left_angles = None
     rear_right_angles = None
 
-    if front_left_hip_x and front_left_hip_y and front_left_knee:
+    if front_left_hip_x is not None and front_left_hip_y is not None and front_left_knee is not None:
         front_left_angles = LegJointAngles(hip_x=front_left_hip_x, hip_y=front_left_hip_y, knee=front_left_knee)
-    if front_right_hip_x and front_right_hip_y and front_left_knee:
-        front_right_angles = LegJointAngles(hip_x=front_right_hip_x, hip_y=front_right_hip_y, knee=front_left_knee)
-    if rear_left_hip_x and rear_left_hip_y and rear_left_knee:
+    if front_right_hip_x is not None and front_right_hip_y is not None and front_right_knee is not None:
+        front_right_angles = LegJointAngles(hip_x=front_right_hip_x, hip_y=front_right_hip_y, knee=front_right_knee)
+    if rear_left_hip_x is not None and rear_left_hip_y is not None and rear_left_knee is not None:
         rear_left_angles = LegJointAngles(hip_x=rear_left_hip_x, hip_y=rear_left_hip_y, knee=rear_left_knee)
-    if rear_right_hip_x and rear_right_hip_y and rear_right_knee:
+    if rear_right_hip_x is not None and rear_right_hip_y is not None and rear_right_knee is not None:
         rear_right_angles = LegJointAngles(hip_x=rear_right_hip_x, hip_y=rear_right_hip_y, knee=rear_right_knee)
 
     front_left_leg = None
@@ -234,27 +234,27 @@ def build_leg_params(
     rear_left_leg = None
     rear_right_leg = None
 
-    if front_left_angles:
+    if front_left_angles is not None:
         front_left_leg = AnimateSingleLeg()
         front_left_leg.joint_angles.CopyFrom(front_left_angles)
-    if front_right_angles:
+    if front_right_angles is not None:
         front_right_leg = AnimateSingleLeg()
         front_right_leg.joint_angles.CopyFrom(front_right_angles)
-    if rear_left_angles:
+    if rear_left_angles is not None:
         rear_left_leg = AnimateSingleLeg()
         rear_left_leg.joint_angles.CopyFrom(rear_left_angles)
-    if rear_right_angles:
+    if rear_right_angles is not None:
         rear_right_leg = AnimateSingleLeg()
         rear_right_leg.joint_angles.CopyFrom(rear_right_angles)
 
     animate_legs = AnimateLegs()
-    if front_left_leg:
+    if front_left_leg is not None:
         animate_legs.fl.CopyFrom(front_left_leg)
-    if front_right_leg:
+    if front_right_leg is not None:
         animate_legs.fr.CopyFrom(front_right_leg)
-    if rear_left_leg:
+    if rear_left_leg is not None:
         animate_legs.hl.CopyFrom(rear_left_leg)
-    if rear_right_leg:
+    if rear_right_leg is not None:
         animate_legs.hr.CopyFrom(rear_right_leg)
 
     return animate_legs
