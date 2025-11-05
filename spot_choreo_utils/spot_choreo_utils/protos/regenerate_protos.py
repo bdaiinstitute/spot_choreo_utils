@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2025 Boston Dynamics AI Institute LLC. All rights reserved.
+# Copyright (c) 2023-2025 Robotics and AI Institute LLC dba RAI Institute. All rights reserved.
 #
 # Script that builds pb2 from .proto definitions.
 # This script creates a build directory structure that mirrors package needs

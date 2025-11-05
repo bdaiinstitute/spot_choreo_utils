@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2025 Boston Dynamics AI Institute LLC. All rights reserved
+# Copyright (c) 2025 Robotics and AI Institute LLC dba RAI Institute. All rights reserved
 
 # Update the developer docker user to match the UID and GID of the host user
 # This simplifies permissions with the mounted repo code
