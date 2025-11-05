@@ -1,4 +1,4 @@
-#  Copyright (c) 2024 Boston Dynamics AI Institute LLC. All rights reserved.
+#  Copyright (c) 2024 Robotics and AI Institute LLC dba RAI Institute. All rights reserved.
 #
 # Functions that modify the contents of a semantic animation to accomplish a specific task
 # If a function is generally useful for keeping animations and their semantic data in sync

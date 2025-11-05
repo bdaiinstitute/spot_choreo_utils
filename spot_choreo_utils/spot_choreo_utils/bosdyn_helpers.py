@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Boston Dynamics AI Institute LLC. All rights reserved.
+# Copyright (c) 2025 Robotics and AI Institute LLC dba RAI Institute. All rights reserved.
 
 from bosdyn.api.robot_state_pb2 import RobotState
 from bosdyn.client import (
