@@ -14,3 +14,6 @@ pytest==8.3.4
 drake==1.24.0
 grpcio-tools==1.69.0
 pre-commit==3.8.0
+fastapi
+websockets
+uvicorn
